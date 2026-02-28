@@ -1,0 +1,1747 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy"
+content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'; base-uri 'self'; form-action 'self'">
+  <title>Loja de Carros | Estoque Selecionado + WhatsApp</title>
+  <meta name="description" content="Carros selecionados, revisados e com garantia. Atendimento rápido no WhatsApp." />
+  <meta name="theme-color" content="#0B1020" />
+  <style>
+    :root{
+      --bg:#070A14;
+      --bg2:#0A0F24;
+      --card: rgba(255,255,255,.06);
+      --line: rgba(255,255,255,.12);
+      --text:#ECF2FF;
+      --muted:#B9C5EE;
+
+      --c1:#00E5FF; 
+      --c2:#7C4DFF;
+      --c3:#00FF9D;
+      --c4:#FF4DD8; 
+
+      --shadow: 0 22px 70px rgba(0,0,0,.55);
+      --r1:18px;
+      --r2:26px;
+      --max:1180px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+	html{
+  scroll-behavior: smooth;
+  scroll-padding-top: 90px;
+}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--text);
+		background:
+		  radial-gradient(1200px 620px at 50% -10%, rgba(255,255,255,.06), transparent 55%),
+
+		  radial-gradient(900px 520px at 14% 10%, rgba(0,229,255,.18), transparent 62%),
+		  radial-gradient(980px 560px at 88% 16%, rgba(124,77,255,.18), transparent 62%),
+		  radial-gradient(860px 520px at 52% 98%, rgba(0,255,157,.10), transparent 64%),
+
+		  linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      overflow-x:hidden;
+    }
+	
+	body{ position:relative; }
+
+/* GRID ultra sutil (estilo sites grandes, dá “acabamento”) */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  opacity:.22;
+  background:
+    linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(1200px 700px at 50% 10%, #000 55%, transparent 82%);
+}
+
+/* VINHETA (borda mais escura = mais “cinema / premium”) + GRAIN leve */
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-1;
+  background:
+    radial-gradient(1200px 900px at 50% 20%, transparent 55%, rgba(0,0,0,.55) 100%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(255,255,255,.02),
+      rgba(255,255,255,.02) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  opacity:.35;
+  mix-blend-mode: normal;
+}
+
+@keyframes floatGlow{
+  0%   { transform: translate3d(0,0,0) scale(1); }
+  50%  { transform: translate3d(22px,-14px,0) scale(1.02); }
+  100% { transform: translate3d(0,0,0) scale(1); }
+}
+
+body::after{
+  /* mantém o que já tem e acrescenta um “glow” animado */
+  background:
+    radial-gradient(1200px 900px at 50% 20%, transparent 55%, rgba(0,0,0,.55) 100%),
+    radial-gradient(700px 420px at 18% 26%, rgba(255,77,216,.08), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.02), rgba(255,255,255,.02) 1px, transparent 1px, transparent 6px);
+  animation: floatGlow 10s ease-in-out infinite;
+}
+
+    a{color:inherit; text-decoration:none}
+    .container{width:min(var(--max), calc(100% - 40px)); margin:0 auto}
+
+    /* ====== Header ====== */
+    header{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(16px);
+      background: linear-gradient(180deg, rgba(7,10,20,.82), rgba(7,10,20,.40));
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:14px 0;
+    }
+    .brand{display:flex; align-items:center; gap:12px}
+    .logo{
+      width:38px; height:38px; border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 35%, rgba(0,229,255,1), transparent 60%),
+        radial-gradient(18px 18px at 70% 70%, rgba(124,77,255,1), transparent 60%),
+        linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    }
+    .brand .name{font-weight:950; letter-spacing:.2px}
+    .brand .sub{font-size:12px; color:var(--muted); margin-top:2px}
+
+    .navlinks{display:flex; gap:10px; flex-wrap:wrap; justify-content:center}
+    .navlinks a{
+      font-size:14px; color:var(--muted);
+      padding:10px 10px; border-radius:14px;
+      border:1px solid transparent;
+      transition:.18s ease;
+    }
+    .navlinks a:hover{
+      color:var(--text);
+      border-color:rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+    }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:10px;
+      padding:12px 14px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      color:var(--text);
+      cursor:pointer;
+      transition:.18s ease;
+      user-select:none;
+      white-space:nowrap;
+    }
+	@media (max-width: 520px){
+  .btn{ white-space: normal; }
+}
+    .btn:hover{transform:translateY(-1px); border-color:rgba(255,255,255,.18)}
+    .btn:active{transform:translateY(0)}
+    .btn.primary{
+      border-color:transparent;
+      background: linear-gradient(135deg, rgba(0,229,255,.95), rgba(124,77,255,.95));
+      color:#061023;
+      font-weight:900;
+      box-shadow: 0 18px 60px rgba(124,77,255,.22);
+    }
+    .btn.whats{
+      border-color:transparent;
+      background: linear-gradient(135deg, rgba(0,255,157,.95), rgba(0,229,255,.88));
+      color:#04141a;
+      font-weight:950;
+      box-shadow: 0 18px 60px rgba(0,255,157,.18);
+    }
+    .btn.small{padding:10px 12px; border-radius:14px; font-size:14px}
+
+    .pill{
+      display:inline-flex; align-items:center; gap:10px;
+      padding:10px 12px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:999px;
+      color:var(--muted);
+      font-size:13px;
+      backdrop-filter: blur(10px);
+    }
+    .pill b{color:var(--text)}
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+      color:var(--muted);
+      font-size:12px;
+    }
+
+    /* ====== Hero ====== */
+    .hero{padding:28px 0 10px}
+	.hero-top{
+	  display:flex;
+	  flex-direction:column;
+	  align-items:center;
+	  justify-content:center;
+	  gap:14px;
+	  flex-wrap:wrap;
+	  text-align:center;
+	  margin-bottom:14px;
+	}
+	.hero-actions{
+	  display:flex;
+	  gap:10px;
+	  flex-wrap:wrap;
+	  align-items:center;
+	  justify-content:center;
+	}
+    h1{
+      margin:10px 0 0;
+      font-size: clamp(28px, 3.3vw, 44px);
+      line-height:1.08;
+      letter-spacing:-.6px;
+    }
+    .accentText{
+      background: linear-gradient(135deg, var(--c1), var(--c2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      font-weight:950;
+    }
+	.lead{
+	  margin:10px auto 0;
+	  color:var(--muted);
+	  line-height:1.55;
+	  max-width: 70ch;
+	  font-size:15px;
+	  text-align:center;
+	}
+    .hero-actions{display:flex; gap:10px; flex-wrap:wrap; align-items:center}
+
+    /* ===== Barra de pesquisa + filtros (clean e central) ===== */
+.searchWrap{
+  margin: 6px auto 16px;
+  width: min(980px, 100%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:12px;
+}
+
+.searchRow{
+  width:100%;
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.searchBox{
+  flex: 1;
+  min-width: 260px;
+  max-width: 760px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.12);
+  background:
+    radial-gradient(380px 120px at 18% 40%, rgba(0,229,255,.10), transparent 62%),
+    radial-gradient(420px 140px at 82% 60%, rgba(124,77,255,.10), transparent 64%),
+    rgba(0,0,0,.20);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 60px rgba(0,0,0,.35);
+}
+
+.searchIcon{
+  width: 18px; height: 18px;
+  opacity:.9;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,.35));
+}
+
+.searchInput{
+  flex:1;
+  border:none;
+  outline:none;
+  background:transparent;
+  color: var(--text);
+  font-size:14px;
+}
+
+.searchInput::placeholder{ color: rgba(185,197,238,.72); }
+
+.pillBtn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(0,0,0,.18);
+  color: rgba(236,242,255,.92);
+  font-size:13px;
+  cursor:pointer;
+  transition:.16s ease;
+  user-select:none;
+}
+.pillBtn:hover{ transform:translateY(-1px); border-color:rgba(255,255,255,.20); }
+.pillBtn:active{ transform:translateY(0); }
+
+.pillBtn.on{
+  border-color: rgba(0,255,157,.45);
+  box-shadow: 0 0 0 3px rgba(0,255,157,.10);
+}
+
+.resultChip{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.05);
+  color: rgba(236,242,255,.9);
+  font-size:13px;
+}
+	/* ====== Estoque ====== */
+    section{padding:18px 0 34px}
+    .section-head{
+      display:flex; align-items:flex-end; justify-content:space-between;
+      gap:14px; flex-wrap:wrap;
+      margin: 10px 0 14px;
+    }
+    .h2{margin:0; font-size:22px; letter-spacing:-.2px}
+    .section-sub{margin:0; color:var(--muted); font-size:14px; line-height:1.6; max-width:80ch}
+
+    .inventory{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:16px;
+    }
+	#estoque{
+	  position: relative;
+	  overflow: hidden;
+	}
+
+	#estoque::before{
+	  content:"";
+	  position:absolute;
+	  inset:0;
+	  z-index:0;
+
+	  background-image:
+		linear-gradient(180deg, rgba(7,10,20,.55), rgba(7,10,20,.72)),
+		url("images/bg-carro.webp");
+
+	  background-repeat: no-repeat;
+	  background-size: cover;
+	  background-position: center top;
+
+	  background-attachment: scroll;
+
+	  opacity: .55; 
+	  pointer-events:none;
+	}
+@media (max-width: 820px){
+  #estoque::before{
+    background-image: none;
+    opacity: 0;
+  }
+}
+
+	/* garante que o conteúdo do estoque fique acima do fundo */
+	#estoque > .container{
+	  position: relative;
+	  z-index: 1;
+	}
+	.car{
+	  border-radius: var(--r2);
+	  overflow:hidden;
+	  border:1px solid rgba(255,255,255,.10);
+	  background: rgba(255,255,255,.04);
+	  box-shadow: 
+		0 12px 40px rgba(0,0,0,.35),
+		0 0 0 rgba(0,0,0,0);
+	  display:flex;
+	  flex-direction:column;
+	  position:relative;
+
+	  cursor:pointer;
+	  transition: 
+		transform .25s cubic-bezier(.22,1,.36,1),
+		box-shadow .25s cubic-bezier(.22,1,.36,1),
+		border-color .25s ease;
+	}
+	.car:hover{
+	  transform: translateY(-8px);
+	  box-shadow:
+		0 28px 80px rgba(0,0,0,.55),
+		0 0 0 1px rgba(255,255,255,.06);
+	  border-color: rgba(255,255,255,.18);
+	}
+	.car::before{
+	  content:"";
+	  position:absolute;
+	  inset:-2px;
+	  border-radius:inherit;
+	  pointer-events:none;
+	  opacity:0;
+	  transition: opacity .25s ease;
+	  background: linear-gradient(
+		135deg,
+		rgba(0,229,255,.45),
+		rgba(124,77,255,.45),
+		rgba(0,255,157,.35)
+	  );
+	  z-index:-1;
+	  filter: blur(16px);
+	}
+
+	.car:hover::before{
+	  opacity:.7;
+	}
+    .photo{
+      height:190px;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(240px 140px at 22% 35%, rgba(0,229,255,.18), transparent 60%),
+        radial-gradient(260px 160px at 72% 70%, rgba(124,77,255,.18), transparent 62%),
+        linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.02));
+    }
+    .photo .car-img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+	  content-visibility: auto;
+      object-fit:cover;
+      display:block;
+    }
+    .photo::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(0deg, rgba(7,10,20,.78), transparent 62%);
+      pointer-events:none;
+    }
+
+    .badge{
+      position:absolute; top:12px; left:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: var(--text);
+      backdrop-filter: blur(10px);
+      display:flex; gap:8px; align-items:center;
+      z-index:2;
+    }
+    .badge .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: var(--c3);
+      box-shadow: 0 0 18px rgba(0,255,157,.45);
+    }
+
+    .content{padding:14px}
+    .titleRow{display:flex; align-items:flex-start; justify-content:space-between; gap:10px}
+    .car h3{margin:0; font-size:16px}
+    .subtitle{margin-top:3px; color:rgba(185,197,238,.85); font-size:12px}
+    .price{
+      font-weight:950;
+      letter-spacing:-.2px;
+      background: linear-gradient(135deg, rgba(0,229,255,.95), rgba(255,77,216,.92));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      white-space:nowrap;
+    }
+
+    .meta{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .meta div{
+      padding:10px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+
+    .actions{
+      margin-top:auto;
+      display:flex;
+      gap:10px;
+      padding:14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.10);
+    }
+    .actions .btn{width:100%}
+
+    /* ====== Confiança ====== */
+    .trust{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:12px;
+      margin-top:12px;
+    }
+    .trust .t{
+      border-radius: var(--r1);
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.16);
+      padding:12px;
+      font-size:13px;
+      color:var(--muted);
+      line-height:1.4;
+    }
+    .trust .t b{color:var(--text)}
+
+    /* ====== CTA final ====== */
+    .cta{
+      border-radius: calc(var(--r2) + 8px);
+      border:1px solid rgba(255,255,255,.12);
+      background:
+        radial-gradient(520px 240px at 14% 40%, rgba(0,229,255,.18), transparent 60%),
+        radial-gradient(520px 260px at 92% 55%, rgba(124,77,255,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .cta .inner{
+      padding:18px;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; flex-wrap:wrap;
+    }
+    .cta h4{margin:0; font-size:18px; letter-spacing:-.2px}
+    .cta p{margin:6px 0 0; color:var(--muted); line-height:1.6; font-size:14px; max-width:78ch}
+
+    footer{
+      padding:22px 0 30px;
+      border-top:1px solid rgba(255,255,255,.06);
+      color:rgba(185,197,238,.75);
+      font-size:13px;
+    }
+    .foot{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+
+    /* ====== Whats flutuante ====== */
+    .float{
+      position:fixed; right:18px; bottom:18px; z-index:80;
+      display:flex; flex-direction:column; gap:10px;
+    }
+    .float .btn{
+      border-radius:999px;
+      padding:13px 14px;
+      box-shadow: 0 22px 70px rgba(0,0,0,.58);
+    }
+
+    @media (max-width: 980px){
+      .inventory{grid-template-columns:1fr}
+      .trust{grid-template-columns:1fr 1fr}
+      .navlinks{display:none}
+    }
+    @media (max-width: 520px){
+      .trust{grid-template-columns:1fr}
+    }
+
+    /* ===== Modal + Galeria ===== */
+    .modalOverlay{
+      position:fixed; inset:0; z-index:999;
+      background: rgba(0,0,0,.62);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .modal{
+      width:min(1020px, 100%);
+      border-radius:26px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,15,36,.92);
+      box-shadow: 0 30px 90px rgba(0,0,0,.65);
+      overflow:hidden;
+    }
+    .modalGrid{
+      display:grid;
+      grid-template-columns: 1.18fr .82fr;
+      min-height: 560px;
+    }
+    .modalMedia{
+      position:relative;
+      background: rgba(255,255,255,.04);
+      border-right:1px solid rgba(255,255,255,.10);
+    }
+    .modalMain{
+      position:relative;
+      height: 420px;
+      overflow:hidden;
+    }
+    .modalMain img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: scale(1.01);
+      cursor: zoom-in;
+	  touch-action: pan-y;
+    }
+		.modalMain.loading::before{
+	  content:"";
+	  position:absolute;
+	  inset:0;
+	  background: rgba(7,10,20,.55);
+	  backdrop-filter: blur(6px);
+	  z-index:2;
+	}
+
+	.modalMain.loading::after{
+	  content:"";
+	  position:absolute;
+	  width:36px;
+	  height:36px;
+	  border-radius:50%;
+	  border:3px solid rgba(255,255,255,.15);
+	  border-top-color: var(--c1);
+	  animation: spin .7s linear infinite;
+	  top:50%;
+	  left:50%;
+	  transform:translate(-50%,-50%);
+	  z-index:3;
+	}
+
+	@keyframes spin{
+	  to{ transform: translate(-50%,-50%) rotate(360deg); }
+	}
+    .modalMain::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(0deg, rgba(7,10,20,.55), transparent 58%);
+      pointer-events:none;
+    }
+    .modalThumbs{
+      display:flex;
+      gap:10px;
+      padding:12px;
+      overflow:auto;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.12);
+    }
+    .modalThumbs::-webkit-scrollbar{height:10px}
+    .modalThumbs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14); border-radius:999px}
+    .thumb{
+      flex:0 0 auto;
+      width:110px;
+      height:78px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      overflow:hidden;
+      cursor:pointer;
+      background: rgba(255,255,255,.06);
+      transition:.15s ease;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .thumb:hover{transform:translateY(-1px); border-color: rgba(255,255,255,.20)}
+    .thumb.active{
+      border-color: rgba(0,255,157,.55);
+      box-shadow: 0 0 0 3px rgba(0,255,157,.12);
+    }
+    .mediaNav{
+      position:absolute; inset:0;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 0 10px;
+      pointer-events:none;
+    }
+    .navBtn{
+      pointer-events:auto;
+      width:44px; height:44px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      color: rgba(236,242,255,.92);
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:18px;
+      backdrop-filter: blur(10px);
+      transition:.15s ease;
+    }
+    .navBtn:hover{border-color: rgba(255,255,255,.22); transform:translateY(-1px)}
+    .navBtn:active{transform:translateY(0)}
+
+    .modalInfo{padding:16px;}
+    .modalTop{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .modalTitle{margin:0; font-size:18px; letter-spacing:-.2px}
+    .modalSub{margin-top:6px; color: rgba(185,197,238,.82); font-size:13px}
+    .modalPrice{
+      margin-top:10px;
+      font-weight:950;
+      background: linear-gradient(135deg, rgba(0,229,255,.95), rgba(255,77,216,.92));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      white-space:nowrap;
+      font-size:18px;
+    }
+    .closeBtn{
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: rgba(236,242,255,.92);
+      border-radius:14px;
+      padding:10px 12px;
+      cursor:pointer;
+    }
+    .closeBtn:hover{border-color: rgba(255,255,255,.22)}
+    .modalMeta{
+      margin-top:12px;
+      display:grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap:10px;
+      color: rgba(185,197,238,.92);
+      font-size:13px;
+    }
+    .modalMeta .box{
+      padding:12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    .modalMeta .box b{color: var(--text)}
+
+    .modalDesc{
+      margin-top:12px;
+      color: rgba(185,197,238,.86);
+      line-height:1.65;
+      font-size:14px;
+      white-space: pre-line; /* deixa os \n virarem linhas */
+    }
+	@media (max-width: 520px){
+  .modalDesc{ word-break: break-word; }
+}
+    .modalActions{
+      margin-top:14px;
+      display:flex;
+      gap:10px;
+    }
+    .modalActions a{width:100%; text-align:center}
+
+    @media (max-width: 900px){
+      .modalGrid{grid-template-columns:1fr; min-height:auto}
+      .modalMedia{border-right:none; border-bottom:1px solid rgba(255,255,255,.10)}
+      .modalMain{height: 320px}
+      .thumb{width:92px; height:68px}
+    }
+@media (max-width: 520px){
+  .modalOverlay{
+    padding:10px;
+    align-items:flex-start;
+  }
+  .modal{
+    border-radius:18px;
+    height: calc(100dvh - 20px);
+    max-height: none;
+    overflow: hidden;
+  }
+  @supports not (height: 100dvh){
+    .modal{ height: calc(100vh - 20px); }
+  }
+  .modalGrid{
+    display:flex;
+    flex-direction:column;
+    min-height: 0;
+    height: 100%;
+  }
+
+  .modalMedia{ border-right:none; border-bottom:1px solid rgba(255,255,255,.10); }
+  .modalMain{ height: 220px; }
+  .modalThumbs{ padding:10px; }
+
+	.modalInfo{
+	  scrollbar-width: thin;                 /* Firefox */
+	  scrollbar-color: rgba(255,255,255,.18) transparent;
+	}
+	.modalInfo::-webkit-scrollbar{ width:8px; }
+	.modalInfo::-webkit-scrollbar-thumb{
+	  background: rgba(255,255,255,.14);
+	  border-radius: 999px;
+	}
+	.modalInfo::-webkit-scrollbar-track{ background: transparent; }
+
+	@media (max-width: 520px){
+	  /* no mobile deixa ainda mais discreto */
+	  .modalInfo::-webkit-scrollbar{ width:4px; }
+	  .modalInfo::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.10); }
+	}
+
+  .modalActions{ flex-direction:column; }
+  .modalActions a{ width:100%; }
+
+  .thumb{ width:84px; height:62px; }
+}
+    /* ===== Lightbox (zoom) ===== */
+    .lightboxOverlay{
+      position:fixed; inset:0; z-index:1001;
+      background: rgba(0,0,0,.78);
+      backdrop-filter: blur(10px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+    .lightbox{
+      width:min(1200px, 100%);
+      border-radius:22px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(10,15,36,.35);
+      box-shadow: 0 30px 90px rgba(0,0,0,.7);
+      overflow:hidden;
+      position:relative;
+    }
+    .lightbox img{
+      width:100%;
+      height: min(80vh, 820px);
+      object-fit:contain;
+      display:block;
+      background: rgba(0,0,0,.25);
+      cursor: zoom-out;
+    }
+    .lightboxHint{
+      position:absolute;
+      left:12px; bottom:12px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.22);
+      color: rgba(236,242,255,.92);
+      font-size:12px;
+    }
+	@media (max-width: 820px){
+  body::before{ display:none; }
+  body::after{ animation:none; }
+}
+@media (max-width: 520px){
+  .pill{
+    max-width:100%;
+    flex-wrap:wrap;
+    justify-content:center;
+    text-align:center;
+    white-space:normal;
+    line-height:1.35;
+  }
+
+  .titleRow{
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .price{
+    white-space:normal;
+  }
+}
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="container">
+      <div class="nav">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <div>
+            <div class="name">SUA LOJA DE CARROS</div>
+          </div>
+        </div>
+
+        <nav class="navlinks" aria-label="Seções">
+          <a href="#estoque">Estoque</a>
+		  <a href="#sobre">Sobre</a>
+		  <a href="#localizacao">Localização e Contato</a>
+        </nav>
+
+        <a class="btn primary small" id="topWhats" href="#">💬 WhatsApp</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container hero" id="topo">
+
+      <div class="hero-top">
+        <div>
+          <div class="pill">✅ <b>Carros selecionados</b> • Revisão • Procedência • Compra Segura</div>
+          <h1>Escolha seu carro em minutos — <span class="accentText">e feche pelo WhatsApp</span>.</h1>
+          <p class="lead">
+            Estoque com fotos, preço e detalhes. Você chama no WhatsApp e eu te respondo com disponibilidade,
+            condições e próximos passos — rápido e transparente.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <section id="estoque">
+      <div class="container">
+	<div class="section-head" style="margin-bottom:8px; justify-content:center">
+	</div>
+
+	<!-- Pesquisa central + filtros -->
+	<div class="searchWrap">
+	  <div class="searchRow">
+		<div class="searchBox" role="search">
+		  <svg class="searchIcon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+			<path d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z" stroke="currentColor" stroke-width="2" opacity=".9"/>
+			<path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".9"/>
+		  </svg>
+		  <input id="searchCars" class="searchInput" type="search"
+			placeholder="Pesquisar: onix, suv, automático, 2019, prata, final 4..."
+			autocomplete="off" />
+		</div>
+
+		<button class="pillBtn" id="clearSearch" type="button">Limpar</button>
+		<span class="resultChip" id="resultsCount">—</span>
+	  </div>
+
+	  <div class="searchRow" style="gap:8px">
+		<button class="pillBtn" type="button" data-filter="SUV">🚙 SUV</button>
+		<button class="pillBtn" type="button" data-filter="Sedan">🚗 Sedan</button>
+		<button class="pillBtn" type="button" data-filter="Hatch">🚙 Hatch</button>
+		<button class="pillBtn" type="button" data-filter="Econômico">⛽ Econômico</button>
+		<button class="pillBtn" type="button" data-filter="Automático">⚙️ Automático</button>
+		<button class="pillBtn" type="button" data-filter="Manual">⚙️ Manual</button>
+		<button class="pillBtn" type="button" data-filter="Ate80">💸 Até R$ 80k</button>
+		<button class="pillBtn" type="button" data-filter="ResetAll">♻️ Reset</button>
+	  </div>
+	</div>
+<div id="emptyState" style="display:none; text-align:center; color:rgba(185,197,238,.85); padding:16px 0;">
+  Nenhum carro encontrado. Tente outro termo ou clique em <b>Reset</b>.
+</div>	
+        <div class="inventory">
+		
+
+          <!-- Carro 1 -->
+          <article class="car">
+            <div class="photo">
+              <img class="car-img" src="images/onix-1.webp" alt="Onix LT 2019" loading="eager" fetchpriority="high" decoding="async">
+              <div class="badge"><span class="dot"></span> Alta procura</div>
+            </div>
+            <div class="content">
+              <div class="titleRow">
+                <div>
+                  <h3>Onix LT 1.0 (Exemplo)</h3>
+                  <div class="subtitle">2019 • Completo • Flex</div>
+                </div>
+                <div class="price">R$ 59.900</div>
+              </div>
+
+              <div class="meta">
+                <div><b>KM</b><br/>58.000</div>
+                <div><b>Câmbio</b><br/>Manual</div>
+                <div><b>Placa</b><br/>Final 4</div>
+              </div>
+            </div>
+            <div class="actions">     
+              <a class="btn small carInfo" href="#"
+                data-title="Onix LT 1.0"
+                data-sub="2019 • Completo • Flex"
+                data-price="R$ 59.900"
+                data-img="images/onix-1.webp"
+                data-images='["images/onix-1.webp","images/onix-2.webp","images/onix-3.webp","images/onix-4.webp","images/onix-5.webp"]'
+                data-desc="Onix LT 1.0 — excelente para quem quer economia e manutenção barata.✅ Pontos fortes: econômico, fácil de manter, bom espaço interno e ótimo custo-benefício.🔎 Estado geral: bem alinhado e com boa pegada de direção (conforme vistoria na loja). Transparência: envio fotos/vídeo e todos os detalhes pelo WhatsApp antes de você vir.⏳ Disponibilidade: sujeito a venda (estoque gira rápido)."
+                data-meta='{"KM":"58.000","Câmbio":"Manual","Combustível":"Flex","Cor":"Prata","Portas":"3","Placa":"Final 4","Chave reserva":"Sim","IPVA":"Ok","Laudo":"Consulte","Revisão":"Em dia","Garantia":"Consulte"}'
+              >Detalhes</a>
+            </div>
+          </article>
+
+          <!-- Carro 2 -->
+          <article class="car">
+            <div class="photo">
+              <img class="car-img" src="images/creta-1.webp" alt="Creta 2020" loading="eager" fetchpriority="high" decoding="async">
+              <div class="badge"><span class="dot"></span> Pronta entrega</div>
+            </div>
+            <div class="content">
+              <div class="titleRow">
+                <div>
+                  <h3>Creta 1.6 (Exemplo)</h3>
+                  <div class="subtitle">2020 • SUV • Manual</div>
+                </div>
+                <div class="price">R$ 89.900</div>
+              </div>
+
+              <div class="meta">
+                <div><b>KM</b><br/>62.000</div>
+                <div><b>IPVA</b><br/>Ok</div>
+                <div><b>Revisão</b><br/>Em dia</div>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="btn small carInfo" href="#"
+                data-title="Creta 1.6"
+                data-sub="2020 • SUV • Manual"
+                data-price="R$ 89.900"
+                data-img="images/creta-1.webp"
+                data-images='["images/creta-1.webp","images/creta-2.webp","images/creta-3.webp","images/creta-4.webp"]'
+                data-desc="Creta 1.6 — SUV ideal pra família e pra quem quer conforto no dia a dia.✅ Pontos fortes: posição de dirigir alta, espaço interno, porta-malas bom e câmbio automático confortável.🔎 Estado geral: revisões em dia e documentação ok (conforme conferência na loja). Transparência: te mando fotos/vídeo, ficha e condições antes de agendar a visita.⏳ Disponibilidade: sujeito a venda (estoque gira rápido)."
+                data-meta='{"KM":"62.000","Câmbio":"Manual","Combustível":"Flex","Cor":"Prata","Portas":"4","Placa":"Final 4","Chave reserva":"Sim","IPVA":"Ok","Laudo":"Consulte","Revisão":"Em dia","Garantia":"Consulte"}'
+              >Detalhes</a>
+            </div>
+          </article>
+
+          <!-- Carro 3 -->
+          <article class="car">
+            <div class="photo">
+              <img class="car-img" src="images/civic-1.webp" alt="Civic EX 2018" loading="lazy" decoding="async">
+              <div class="badge"><span class="dot"></span> Oportunidade</div>
+            </div>
+            <div class="content">
+              <div class="titleRow">
+                <div>
+                  <h3>Civic EX (Exemplo)</h3>
+                  <div class="subtitle">2018 • Sedan • Automático</div>
+                </div>
+                <div class="price">R$ 109.900</div>
+              </div>
+
+              <div class="meta">
+                <div><b>KM</b><br/>74.000</div>
+                <div><b>Doc</b><br/>Ok</div>
+                <div><b>Chaves</b><br/>Reserva</div>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="btn small carInfo" href="#"
+                data-title="Civic EX"
+                data-sub="2018 • Sedan • Automático"
+                data-price="R$ 109.900"
+                data-img="images/civic-1.webp"
+                data-images='["images/civic-1.webp","images/civic-2.webp","images/civic-3.webp","images/civic-4.webp"]'
+                data-desc="Civic EX — pra quem quer conforto, dirigibilidade e acabamento acima da média.✅ Pontos fortes: estabilidade, consumo equilibrado, conforto e bom valor de revenda.🔎 Estado geral: documentação ok e pronto para transferência (conforme conferência).🧾 Transparência: envio fotos/vídeo e detalhes completos antes da visita.⏳ Disponibilidade: sujeito a venda."
+                data-meta='{"KM":"74.000","Câmbio":"Automático","Combustível":"Flex","Cor":"Prata","Portas":"4","Placa":"Final 2","Chave reserva":"Sim","IPVA":"Consulte","Laudo":"Consulte","Revisão":"Ok","Garantia":"Consulte"}'
+              >Detalhes</a>
+            </div>
+          </article>
+
+          <!-- Carro 4 -->
+          <article class="car">
+            <div class="photo">
+              <img class="car-img" src="images/hb20-1.webp" alt="HB20 Comfort 2021" loading="lazy" decoding="async">
+              <div class="badge"><span class="dot"></span> Melhor custo-benefício</div>
+            </div>
+            <div class="content">
+              <div class="titleRow">
+                <div>
+                  <h3>HB20 Comfort (Exemplo)</h3>
+                  <div class="subtitle">2021 • Econômico • Flex</div>
+                </div>
+                <div class="price">R$ 69.900</div>
+              </div>
+
+              <div class="meta">
+                <div><b>KM</b><br/>45.000</div>
+                <div><b>Câmbio</b><br/>Manual</div>
+                <div><b>Garantia</b><br/>Consulte</div>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="btn small carInfo" href="#"
+                data-title="HB20 Comfort"
+                data-sub="2021 • Econômico • Flex • Hatch"
+                data-price="R$ 69.900"
+                data-img="images/hb20-1.webp"
+                data-images='["images/hb20-1.webp","images/hb20-2.webp","images/hb20-3.webp"]'
+                data-desc="HB20 Comfort — ótimo para dia a dia com baixo custo de manutenção.✅ Pontos fortes: econômico, confortável, bom pacote e ótima revenda.🔎 Estado geral: vistoriado e pronto para transferir (conforme conferência na loja). Transparência: mando fotos/vídeo e condições completas pelo WhatsApp.⏳ Disponibilidade: sujeito a venda."
+                data-meta='{"KM":"45.000","Câmbio":"Manual","Combustível":"Flex","Cor":"Prata","Portas":"4","Placa":"Final 3","Chave reserva":"Consulte","IPVA":"Ok","Laudo":"Consulte","Revisão":"Ok","Garantia":"Consulte"}'
+              >Detalhes</a>
+            </div>
+          </article>
+
+          <!-- Carro 5 -->
+          <article class="car">
+            <div class="photo">
+              <img class="car-img" src="images/compass-1.webp" alt="Compass 2019" loading="lazy" decoding="async">
+              <div class="badge"><span class="dot"></span> Família</div>
+            </div>
+            <div class="content">
+              <div class="titleRow">
+                <div>
+                  <h3>Compass (Exemplo)</h3>
+                  <div class="subtitle">2019 • SUV • Automático</div>
+                </div>
+                <div class="price">R$ 119.900</div>
+              </div>
+
+              <div class="meta">
+                <div><b>KM</b><br/>79.000</div>
+                <div><b>Laudo</b><br/>Ok</div>
+                <div><b>Entrada</b><br/>Consulte</div>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="btn small carInfo" href="#"
+                data-title="Compass"
+                data-sub="2019 • SUV • Automático"
+                data-price="R$ 119.900"
+                data-img="images/compass-1.webp"
+                data-images='["images/compass-1.webp","images/compass-2.webp","images/compass-3.webp"]'
+                data-desc="Compass — SUV com conforto e presença, excelente para família e estrada.✅ Pontos fortes: acabamento, dirigibilidade, estabilidade e posição de dirigir.🔎 Estado geral: documentação ok e pronto para transferência.Transparência: mando fotos/vídeo, detalhes e condições antes de você vir.⏳ Disponibilidade: sujeito a venda."
+                data-meta='{"KM":"79.000","Câmbio":"Automático","Combustível":"Flex","Cor":"Prata","Portas":"4","Placa":"Final 5","Chave reserva":"Consulte","IPVA":"Consulte","Laudo":"Ok","Revisão":"Consulte","Garantia":"Consulte"}'
+              >Detalhes</a>
+            </div>
+          </article>
+
+          <!-- Carro 6 -->
+          <article class="car">
+            <div class="photo">
+              <img class="car-img" src="images/corolla-1.webp" alt="Corolla XEi 2017" loading="lazy" decoding="async">
+              <div class="badge"><span class="dot"></span> Conforto</div>
+            </div>
+            <div class="content">
+              <div class="titleRow">
+                <div>
+                  <h3>Corolla XEi (Exemplo)</h3>
+                  <div class="subtitle">2017 • Sedan • Automático</div>
+                </div>
+                <div class="price">R$ 99.900</div>
+              </div>
+
+              <div class="meta">
+                <div><b>KM</b><br/>88.000</div>
+                <div><b>Doc</b><br/>Ok</div>
+                <div><b>Revisão</b><br/>Ok</div>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="btn small carInfo" href="#"
+                data-title="Corolla XEi"
+                data-sub="2017 • Sedan • Automático"
+                data-price="R$ 99.900"
+                data-img="images/corolla-1.webp"
+                data-images='["images/corolla-1.webp","images/corolla-2.webp","images/corolla-3.webp"]'
+                data-desc="Corolla XEi — referência em conforto e confiabilidade.✅ Pontos fortes: mecânica robusta, conforto, baixa desvalorização e revenda excelente.🔎 Estado geral: documentação ok e pronto para transferir (conforme conferência).Transparência: mando fotos/vídeo, ficha e condições pelo WhatsApp. Disponibilidade: sujeito a venda."
+                data-meta='{"KM":"88.000","Câmbio":"Automático","Combustível":"Flex","Cor":"Prata","Portas":"4","Placa":"Final 6", "Chave reserva":"Consulte","IPVA":"Consulte","Laudo":"Consulte","Revisão":"Ok","Garantia":"Consulte"}'
+              >Detalhes</a>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+<section id="sobre">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2 class="h2">Sobre</h2>
+        <p class="section-sub">
+          Exemplo: somos uma loja focada em carros selecionados, com processo simples e atendimento direto.
+          Aqui você vê fotos, detalhes e resolve tudo rápido.
+        </p>
+      </div>
+    </div>
+
+    <div class="trust">
+	<div class="t">✅ <b>Procedência</b><br/>Documentação e histórico conferidos</div>
+	<div class="t">🔧 <b>Revisão</b><br/>Antes da entrega (conforme veículo)</div>
+	<div class="t">✅ <b>Transparência</b><br/>Preço, condições e detalhes claros</div>
+	<div class="t">💬 <b>Atendimento</b><br/>Rápido e objetivo no WhatsApp</div>
+    </div>
+  </div>
+</section>
+
+<section id="localizacao">
+  <div class="container">
+    <div class="section-head" style="justify-content:center; text-align:center">
+  <div>
+    <h2 class="h2">Localização e Contato</h2>
+    <p class="section-sub">
+      Av. Paulista, 1000 — Bela Vista, São Paulo — SP • (11) 99999-9999 • contato@seudominio.com
+    </p>
+  </div>
+
+  <a class="btn primary small"
+     href="https://www.google.com/maps/dir/?api=1&destination=Av.%20Paulista%2C%201000%20-%20Bela%20Vista%2C%20S%C3%A3o%20Paulo%20-%20SP"
+     target="_blank" rel="noopener">
+    📍 Como chegar (Google Maps)
+  </a>
+</div>
+  </div>
+</section>
+    <footer>
+      <div class="container">
+        <div class="foot">
+          <div>
+            <b style="color:var(--text)">SUA LOJA DE CARROS</b><br/>
+          </div>
+          <div>
+            <span>© <span id="year"></span> • Todos os direitos reservados</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <div class="float" aria-label="Atalhos">
+    <a class="btn whats" id="floatWhats" href="#">💬 WhatsApp</a>
+    <a class="btn small" href="#topo">⬆️ Topo</a>
+  </div>
+
+  <!-- ===== Modal com Galeria ===== -->
+  <div class="modalOverlay" id="carModal">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Detalhes do carro">
+      <div class="modalGrid">
+
+        <div class="modalMedia">
+          <div class="modalMain">
+            <img id="modalMainImg" src="" alt="">
+			<div id="photoCounter"
+  style="
+    position:absolute;
+    right:12px;
+    bottom:12px;
+    padding:8px 10px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,.14);
+    background: rgba(0,0,0,.22);
+    color: rgba(236,242,255,.92);
+    font-size:12px;
+    z-index:3;
+    backdrop-filter: blur(10px);
+  "
+>1/1</div>
+            <div class="mediaNav">
+              <button class="navBtn" id="prevImg" type="button" aria-label="Foto anterior">‹</button>
+              <button class="navBtn" id="nextImg" type="button" aria-label="Próxima foto">›</button>
+            </div>
+          </div>
+          <div class="modalThumbs" id="modalThumbs"></div>
+        </div>
+
+        <div class="modalInfo">
+          <div class="modalTop">
+            <div>
+              <h3 class="modalTitle" id="modalTitle">—</h3>
+              <div class="modalSub" id="modalSub">—</div>
+            </div>
+            <button class="closeBtn" id="closeModal" type="button">Fechar</button>
+          </div>
+
+          <div class="modalPrice" id="modalPrice">—</div>
+          <div class="modalMeta" id="modalMeta"></div>
+          <div class="modalDesc" id="modalDesc">—</div>
+
+          <div class="modalActions">
+            <a class="btn whats" id="modalWhats" href="#">💬 Quero esse no WhatsApp</a>
+            <a class="btn" id="modalCloseLink" href="#">Voltar</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Lightbox (ZOOM) ===== -->
+  <div class="lightboxOverlay" id="lightbox">
+    <div class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+      <img id="lightboxImg" src="" alt="">
+      <div class="lightboxHint">ESC ou clique fora para fechar</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIG =====
+    const STORE_NAME = "SUA LOJA DE CARROS";
+    const WHATS_NUMBER_E164 = "5511999999999"; // 55 + DDD + número (sem espaços)
+    const DEFAULT_MESSAGE = `Olá! Vim pelo site da ${STORE_NAME}. Quero ver o estoque completo e condições.`;
+    const waLink = (text) => `https://wa.me/${WHATS_NUMBER_E164}?text=${encodeURIComponent(text)}`;
+	try {
+
+    // Year
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // Whats CTAs fixos
+    function hook(id, msg){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.href = waLink(msg);
+      el.target = "_blank";
+      el.rel = "noopener";
+    }
+    hook("topWhats", DEFAULT_MESSAGE);
+    hook("heroWhats", DEFAULT_MESSAGE);
+    hook("midWhats", `Olá! Vim pelo site da ${STORE_NAME}. Quero opções e condições de pagamento.`);
+    hook("finalWhats", `Olá! Vim pelo site da ${STORE_NAME}. Quero opções do dia e disponibilidade.`);
+    hook("floatWhats", DEFAULT_MESSAGE);
+
+    // ===== Modal + Galeria =====
+    const modal = document.getElementById("carModal");
+    const closeModalBtn = document.getElementById("closeModal");
+    const modalCloseLink = document.getElementById("modalCloseLink");
+
+const photoCounter = document.getElementById("photoCounter");
+
+    const modalMainImg = document.getElementById("modalMainImg");
+    const modalThumbs = document.getElementById("modalThumbs");
+
+    const modalTitle = document.getElementById("modalTitle");
+    const modalSub = document.getElementById("modalSub");
+    const modalPrice = document.getElementById("modalPrice");
+    const modalMeta = document.getElementById("modalMeta");
+    const modalDesc = document.getElementById("modalDesc");
+    const modalWhats = document.getElementById("modalWhats");
+
+    const prevImgBtn = document.getElementById("prevImg");
+    const nextImgBtn = document.getElementById("nextImg");
+
+    let gallery = [];
+    let currentIndex = 0;
+
+    const parseJSON = (s, fallback) => {
+      try { return JSON.parse(s); } catch(e){ return fallback; }
+    };
+
+function setMainImage(idx){
+  if(!gallery.length) return;
+  currentIndex = (idx + gallery.length) % gallery.length;
+	modalMainImg.closest(".modalMain").classList.add("loading");
+
+	const img = new Image();
+	img.src = gallery[currentIndex];
+	img.decoding = "async";
+
+	img.onload = () => {
+	  modalMainImg.src = img.src;
+	  modalMainImg.closest(".modalMain").classList.remove("loading");
+	};
+
+  [...modalThumbs.querySelectorAll(".thumb")].forEach((t, i) => {
+    t.classList.toggle("active", i === currentIndex);
+  });
+
+  if(photoCounter){
+    photoCounter.textContent = `${currentIndex + 1}/${gallery.length}`;
+  }
+
+  const next = gallery[(currentIndex + 1) % gallery.length];
+  if(next){
+    const img = new Image();
+    img.decoding = "async";
+    img.src = next;
+  }
+}
+
+    function renderThumbs(images){
+      modalThumbs.innerHTML = "";
+      images.forEach((src, i) => {
+        const t = document.createElement("button");
+        t.type = "button";
+        t.className = "thumb" + (i === 0 ? " active" : "");
+        const img = document.createElement("img");
+img.src = src;
+img.alt = `Foto ${i+1}`;
+img.loading = "lazy";
+img.decoding = "async";
+t.appendChild(img);
+        t.addEventListener("click", () => setMainImage(i));
+        modalThumbs.appendChild(t);
+      });
+    }
+
+    function openModal(data){
+      gallery = (Array.isArray(data.images) && data.images.length) ? data.images : (data.img ? [data.img] : []);
+      currentIndex = 0;
+
+      modalTitle.textContent = data.title || "—";
+      modalSub.textContent = data.sub || "";
+      modalPrice.textContent = data.price || "—";
+      modalDesc.textContent = data.desc || "";
+
+      modalMeta.innerHTML = "";
+      const metaObj = parseJSON(data.meta || "{}", {});
+      Object.entries(metaObj).slice(0, 8).forEach(([k,v])=>{
+        const div = document.createElement("div");
+        div.className = "box";
+        const b = document.createElement("b");
+b.textContent = k;
+
+div.appendChild(b);
+div.appendChild(document.createElement("br"));
+div.appendChild(document.createTextNode(String(v)));
+			modalMeta.appendChild(div);
+		  });
+
+		  renderThumbs(gallery);
+		  gallery.forEach(src => {
+  const im = new Image();
+  im.decoding = "async";
+  im.src = src;
+});
+		  modalMainImg.alt = data.title || "Carro";
+		  if(gallery.length) setMainImage(0);
+
+		  const msg =
+	`Olá! Vim pelo site da ${STORE_NAME}.
+	Tenho interesse no: ${data.title} (${data.sub}).
+	Preço: ${data.price}.
+	Pode me mandar mais fotos, vídeo e condições?`;
+		  modalWhats.href = waLink(msg);
+		  modalWhats.target = "_blank";
+		  modalWhats.rel = "noopener";
+
+		  modal.style.display = "flex";
+		  document.body.style.overflow = "hidden";
+		  closeModalBtn.focus();
+		}
+
+		function closeModal(){
+		  modal.style.display = "none";
+		  gallery = [];
+		  currentIndex = 0;
+		  // se o lightbox estiver aberto, não mexe aqui
+		  if(lightbox.style.display !== "flex") document.body.style.overflow = "";
+		}
+
+		closeModalBtn.addEventListener("click", closeModal);
+		modalCloseLink.addEventListener("click", (e)=>{ e.preventDefault(); closeModal(); });
+const modalOverlay = document.getElementById("carModal");
+// ...
+modalOverlay.addEventListener("click", (e) => {
+  if(e.target === modalOverlay) closeModal();
+});
+
+		prevImgBtn.addEventListener("click", () => setMainImage(currentIndex - 1));
+		nextImgBtn.addEventListener("click", () => setMainImage(currentIndex + 1));
+
+		// Swipe mobile (no modal)
+let touchStartX = null;
+let touchStartY = null;
+
+modalMainImg.addEventListener("touchstart", (e) => {
+  const t = e.touches?.[0];
+  if(!t) return;
+  touchStartX = t.clientX;
+  touchStartY = t.clientY;
+}, { passive: true });
+
+modalMainImg.addEventListener("touchmove", (e) => {
+  // se estiver claramente deslizando na horizontal, evita scroll “roubar” o gesto
+  if(touchStartX === null || touchStartY === null) return;
+  const t = e.touches?.[0];
+  if(!t) return;
+
+  const dx = t.clientX - touchStartX;
+  const dy = t.clientY - touchStartY;
+
+  if(Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)){
+    e.preventDefault(); // precisa do listener não-passive
+  }
+}, { passive: false });
+
+modalMainImg.addEventListener("touchend", (e) => {
+  if(touchStartX === null || touchStartY === null) return;
+
+  const t = e.changedTouches?.[0];
+  if(!t) return;
+
+  const dx = t.clientX - touchStartX;
+  const dy = t.clientY - touchStartY;
+
+  // só troca se o gesto foi horizontal de verdade
+  if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){
+    if(dx > 0) setMainImage(currentIndex - 1);
+    else setMainImage(currentIndex + 1);
+  }
+
+  touchStartX = null;
+  touchStartY = null;
+}, { passive: true });
+		// Abrir modal
+		const inventoryEl = document.querySelector(".inventory");
+
+		if(inventoryEl){
+		  inventoryEl.addEventListener("click", (e) => {
+			// clicou no botão Detalhes?
+			const infoBtn = e.target.closest(".carInfo");
+			if(infoBtn){
+			  e.preventDefault();
+			  const images = parseJSON(infoBtn.dataset.images || "[]", []);
+			  openModal({
+				title: infoBtn.dataset.title,
+				sub: infoBtn.dataset.sub,
+				price: infoBtn.dataset.price,
+				img: infoBtn.dataset.img,
+				images,
+				desc: infoBtn.dataset.desc,
+				meta: infoBtn.dataset.meta
+			  });
+			  return;
+			}
+
+			// clicou no card (fora de botões/links)?
+			const card = e.target.closest(".car");
+			if(!card) return;
+			const clickedControl = e.target.closest("a, button");
+			if(clickedControl) return;
+
+			const btn = card.querySelector(".carInfo");
+			if(!btn) return;
+
+			const images = parseJSON(btn.dataset.images || "[]", []);
+			openModal({
+			  title: btn.dataset.title,
+			  sub: btn.dataset.sub,
+			  price: btn.dataset.price,
+			  img: btn.dataset.img,
+			  images,
+			  desc: btn.dataset.desc,
+			  meta: btn.dataset.meta
+			});
+		  });
+		}
+		// ===== Lightbox (ZOOM) =====
+		const lightbox = document.getElementById("lightbox");
+		const lightboxImg = document.getElementById("lightboxImg");
+
+		function openLightbox(src, alt){
+		  if(!src) return;
+		  lightboxImg.src = src;
+		  lightboxImg.alt = alt || "Imagem ampliada";
+		  lightbox.style.display = "flex";
+		  document.body.style.overflow = "hidden";
+		}
+		function closeLightbox(){
+		  lightbox.style.display = "none";
+		  lightboxImg.src = "";
+		  // se modal estiver aberto, continua travado
+		  document.body.style.overflow = (modal.style.display === "flex") ? "hidden" : "";
+		}
+
+		// Clique na imagem do modal abre zoom
+		modalMainImg.addEventListener("click", () => {
+		  openLightbox(modalMainImg.src, modalTitle.textContent);
+		});
+
+		// Fecha zoom clicando fora
+		lightbox.addEventListener("click", (e) => {
+		  if(e.target === lightbox) closeLightbox();
+		});
+
+		// ESC: fecha lightbox primeiro; se não tiver, fecha modal
+		document.addEventListener("keydown", (e) => {
+		  if(e.key !== "Escape") return;
+
+		  if(lightbox.style.display === "flex"){
+			closeLightbox();
+			return;
+		  }
+		  if(modal.style.display === "flex"){
+			closeModal();
+			return;
+		  }
+		});
+// ===== Pesquisa + Filtros (INTELIGENTE + COMBINÁVEIS) =====
+(() => {
+  const searchInput = document.getElementById("searchCars");
+  const clearSearch = document.getElementById("clearSearch");
+  const resultsCount = document.getElementById("resultsCount");
+
+  const carCards = [...document.querySelectorAll(".inventory .car")];
+  const filterBtns = [...document.querySelectorAll("[data-filter]")];
+  const activeFilters = new Set();
+
+  function normalize(s){
+    return (s || "")
+      .toString()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function priceToNumber(priceStr){
+    const digits = (priceStr || "").replace(/[^\d]/g, "");
+    return digits ? Number(digits) : null;
+  }
+
+  function buildSearchText(carEl){
+    const infoBtn = carEl.querySelector(".carInfo");
+    const title = infoBtn?.dataset.title || carEl.querySelector("h3")?.textContent || "";
+    const sub   = infoBtn?.dataset.sub || carEl.querySelector(".subtitle")?.textContent || "";
+    const desc  = infoBtn?.dataset.desc || "";
+    const meta  = infoBtn?.dataset.meta || "";
+    const price = infoBtn?.dataset.price || "";
+    return normalize(`${title} ${sub} ${desc} ${meta} ${price}`);
+  }
+
+  // Indexa uma vez (rápido e leve)
+  const index = carCards.map(card => ({ card, text: buildSearchText(card) }));
+
+  function matchesQuickFilter(card, filterKey){
+    const infoBtn = card.querySelector(".carInfo");
+    const sub = normalize(infoBtn?.dataset.sub || card.querySelector(".subtitle")?.textContent || "");
+    const meta = normalize(infoBtn?.dataset.meta || "");
+    const full = `${sub} ${meta}`;
+
+    if(filterKey === "SUV") return full.includes("suv");
+    if(filterKey === "Sedan") return full.includes("sedan");
+    if(filterKey === "Hatch") return full.includes("hatch");
+    if(filterKey === "Econômico") return full.includes("economico") || full.includes("1.0") || full.includes("1.4");
+    if(filterKey === "Automático") return full.includes("automatico");
+    if(filterKey === "Manual") return full.includes("manual");
+
+    if(filterKey === "Ate80"){
+      const price = priceToNumber(infoBtn?.dataset.price || "");
+      return price !== null ? price <= 80000 : false;
+    }
+    return true;
+  }
+
+  function tokenizeSmart(raw){
+    const q = normalize(raw);
+    if(!q) return [];
+
+    const tokens = q.split(" ").filter(Boolean);
+    const out = [];
+
+    for(const t0 of tokens){
+      const t = t0;
+
+      // evita “3” sozinho bater em tudo
+      if(/^\d$/.test(t)) continue;
+
+      // 80k -> 80000
+      const mK = t.match(/^(\d+)k$/);
+      if(mK){ out.push(String(Number(mK[1]) * 1000)); continue; }
+
+      // 4p -> 4 + portas
+      const mP = t.match(/^(\d+)p$/);
+      if(mP){ out.push(mP[1], "portas", `${mP[1]} portas`); continue; }
+
+      // final4 / f4 / placa4
+      const mF = t.match(/^(final|placa|f)(\d)$/);
+      if(mF){ out.push("final", mF[2], `final ${mF[2]}`, "placa"); continue; }
+
+      // câmbio
+      if(["auto","autom","at"].includes(t)){ out.push("automatico"); continue; }
+      if(["mec","man"].includes(t)){ out.push("manual"); continue; }
+
+      // tipos
+      if(["sedã"].includes(t)){ out.push("sedan"); continue; }
+
+      out.push(t);
+    }
+
+    return [...new Set(out)];
+  }
+
+  function matchesQuerySmart(indexText, rawQuery){
+    const terms = tokenizeSmart(rawQuery);
+    if(!terms.length) return true;
+    return terms.every(term => indexText.includes(term));
+  }
+
+  function updateCount(n){
+    if(resultsCount) resultsCount.textContent = `${n} encontrados`;
+  }
+
+  function applyFilter(){
+    const q = searchInput?.value || "";
+    let visible = 0;
+
+    index.forEach(({card, text}) => {
+      const okText = matchesQuerySmart(text, q);
+
+      let okFilters = true;
+      for(const f of activeFilters){
+        if(!matchesQuickFilter(card, f)){ okFilters = false; break; }
+      }
+
+      const ok = okText && okFilters;
+      card.style.display = ok ? "" : "none";
+      if(ok) visible++;
+    });
+
+    updateCount(visible);
+	const emptyState = document.getElementById("emptyState");
+if(emptyState) emptyState.style.display = (visible === 0) ? "block" : "none";
+  }
+
+  // init
+  applyFilter();
+
+  if(searchInput){
+    searchInput.addEventListener("input", applyFilter);
+  }
+
+  if(clearSearch){
+    clearSearch.addEventListener("click", () => {
+      if(searchInput) searchInput.value = "";
+      activeFilters.clear();
+      filterBtns.forEach(b => b.classList.remove("on"));
+      applyFilter();
+      searchInput?.focus();
+    });
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.filter;
+
+      if(key === "ResetAll"){
+        activeFilters.clear();
+        filterBtns.forEach(b => b.classList.remove("on"));
+        if(searchInput) searchInput.value = "";
+        applyFilter();
+        return;
+      }
+
+      if(activeFilters.has(key)){
+        activeFilters.delete(key);
+        btn.classList.remove("on");
+      }else{
+        activeFilters.add(key);
+        btn.classList.add("on");
+      }
+
+      applyFilter();
+    });
+  });
+})();
+} catch (err) {
+  console.error("Erro no script do site:", err);
+}
+  </script>
+</body>
+</html>
