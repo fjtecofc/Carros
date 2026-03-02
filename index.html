@@ -1446,17 +1446,25 @@ body::after{
 	function updateMoreInfoHint(){
 	  if(!modalInfoEl || !moreInfoHint) return;
 
-	  const canScroll = modalInfoEl.scrollHeight > (modalInfoEl.clientHeight + 8);
+	  const isMobile = window.matchMedia("(max-width: 520px)").matches;
+	  if(!isMobile){
+		moreInfoHint.style.display = "none";
+		return;
+	  }
+
+	  const canScroll = modalInfoEl.scrollHeight > (modalInfoEl.clientHeight + 2);
 	  const remaining = modalInfoEl.scrollHeight - (modalInfoEl.scrollTop + modalInfoEl.clientHeight);
-	  
-	  const shouldShow = canScroll && remaining > 40;
+
+	  const shouldShow = canScroll && remaining > 10;
 
 	  moreInfoHint.style.display = shouldShow ? "inline-flex" : "none";
 	}
 
-		if(modalInfoEl){
-		  modalInfoEl.addEventListener("scroll", updateMoreInfoHint, { passive:true });
-		}
+	if(modalInfoEl){
+	  modalInfoEl.addEventListener("scroll", updateMoreInfoHint, { passive:true });
+	}
+
+	window.addEventListener("resize", updateMoreInfoHint);
 
 		if(moreInfoHint && modalInfoEl){
 		  moreInfoHint.addEventListener("click", () => {
@@ -1464,7 +1472,6 @@ body::after{
 			  top: Math.max(220, Math.floor(modalInfoEl.clientHeight * 0.65)),
 			  behavior: "smooth"
 			});
-			// atualiza após o scroll começar
 			setTimeout(updateMoreInfoHint, 120);
 		  });
 		}
@@ -1579,8 +1586,10 @@ div.appendChild(document.createTextNode(String(v)));
 
 		if(modalInfoEl){
 		  modalInfoEl.scrollTop = 0;
+
 		  requestAnimationFrame(updateMoreInfoHint);
 		  setTimeout(updateMoreInfoHint, 150);
+		  setTimeout(updateMoreInfoHint, 350); 
 		}
 
 		document.body.style.overflow = "hidden";
