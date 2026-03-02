@@ -590,6 +590,30 @@ body::after{
       grid-template-columns: 1.18fr .82fr;
       min-height: 560px;
     }
+		.modalCloseBtn{
+	  position:absolute;
+	  top:12px;
+	  right:12px;
+	  width:42px;
+	  height:42px;
+	  border-radius:999px;
+	  border:1px solid rgba(255,255,255,.14);
+	  background: rgba(0,0,0,.25);
+	  color: rgba(236,242,255,.92);
+	  font-size:18px;
+	  display:flex;
+	  align-items:center;
+	  justify-content:center;
+	  cursor:pointer;
+	  backdrop-filter: blur(10px);
+	  z-index:10;
+	  transition:.2s ease;
+	}
+
+	.modalCloseBtn:hover{
+	  background: rgba(0,0,0,.45);
+	  transform: scale(1.05);
+	}
     .modalMedia{
       position:relative;
       background: rgba(255,255,255,.04);
@@ -772,15 +796,14 @@ body::after{
     padding:10px;
     align-items:flex-start;
   }
+
   .modal{
     border-radius:18px;
     height: calc(100dvh - 20px);
     max-height: none;
     overflow: hidden;
   }
-  @supports not (height: 100dvh){
-    .modal{ height: calc(100vh - 20px); }
-  }
+
   .modalGrid{
     display:flex;
     flex-direction:column;
@@ -788,29 +811,53 @@ body::after{
     height: 100%;
   }
 
-  .modalMedia{ border-right:none; border-bottom:1px solid rgba(255,255,255,.10); }
+  .modalMedia{
+    border-right:none;
+    border-bottom:1px solid rgba(255,255,255,.10);
+    flex: 0 0 auto;
+  }
+
   .modalMain{ height: 220px; }
   .modalThumbs{ padding:10px; }
 
-	.modalInfo{
-	  scrollbar-width: thin;                 /* Firefox */
-	  scrollbar-color: rgba(255,255,255,.18) transparent;
-	}
-	.modalInfo::-webkit-scrollbar{ width:8px; }
-	.modalInfo::-webkit-scrollbar-thumb{
-	  background: rgba(255,255,255,.14);
-	  border-radius: 999px;
-	}
-	.modalInfo::-webkit-scrollbar-track{ background: transparent; }
+  .modalInfo{
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
 
-	@media (max-width: 520px){
-	  /* no mobile deixa ainda mais discreto */
-	  .modalInfo::-webkit-scrollbar{ width:4px; }
-	  .modalInfo::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.10); }
-	}
+  .modalActions{
+    order: -1;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    margin: 0;
+    padding: 10px 0;
+    background: linear-gradient(180deg, rgba(10,15,36,.96), rgba(10,15,36,.74));
+    border-bottom: 1px solid rgba(255,255,255,.08);
 
-  .modalActions{ flex-direction:column; }
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+
   .modalActions a{ width:100%; }
+
+  .moreInfoHint{
+    display:none; /* JS liga/desliga */
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.18);
+    color: rgba(236,242,255,.92);
+    font-size: 12px;
+    align-self: flex-start;
+  }
 
   .thumb{ width:84px; height:62px; }
 }
@@ -851,6 +898,50 @@ body::after{
       color: rgba(236,242,255,.92);
       font-size:12px;
     }
+	.lightboxClose{
+	  position:absolute;
+	  top:10px; right:10px;
+	  width:44px; height:44px;
+	  border-radius:999px;
+	  border:1px solid rgba(255,255,255,.14);
+	  background: rgba(0,0,0,.25);
+	  color: rgba(236,242,255,.92);
+	  cursor:pointer;
+	  display:flex;
+	  align-items:center;
+	  justify-content:center;
+	  font-size:18px;
+	  backdrop-filter: blur(10px);
+	  z-index:3;
+	}
+
+	.lightboxNav{
+	  position:absolute;
+	  inset:0;
+	  display:flex;
+	  align-items:center;
+	  justify-content:space-between;
+	  padding: 0 10px;
+	  pointer-events:none;
+	  z-index:2;
+	}
+
+	.lightboxNav .navBtn{
+	  pointer-events:auto;
+	}
+
+	.lightboxCounter{
+	  position:absolute;
+	  right:12px; bottom:12px;
+	  padding:8px 10px;
+	  border-radius:999px;
+	  border:1px solid rgba(255,255,255,.14);
+	  background: rgba(0,0,0,.22);
+	  color: rgba(236,242,255,.92);
+	  font-size:12px;
+	  z-index:3;
+	  backdrop-filter: blur(10px);
+	}
 	@media (max-width: 820px){
   body::before{ display:none; }
   body::after{ animation:none; }
@@ -1221,6 +1312,9 @@ body::after{
   <!-- ===== Modal com Galeria ===== -->
   <div class="modalOverlay" id="carModal">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Detalhes do carro">
+	 <button class="modalCloseBtn" id="modalCloseBtn" type="button" aria-label="Fechar detalhes">
+    ✕
+  </button>
       <div class="modalGrid">
 
         <div class="modalMedia">
@@ -1261,6 +1355,7 @@ body::after{
           <div class="modalPrice" id="modalPrice">—</div>
           <div class="modalMeta" id="modalMeta"></div>
           <div class="modalDesc" id="modalDesc">—</div>
+		  <div class="moreInfoHint" id="moreInfoHint">⬇️ Mais informações abaixo</div>
 
           <div class="modalActions">
             <a class="btn whats" id="modalWhats" href="#">💬 Quero esse no WhatsApp</a>
@@ -1273,12 +1368,21 @@ body::after{
   </div>
 
   <!-- ===== Lightbox (ZOOM) ===== -->
-  <div class="lightboxOverlay" id="lightbox">
-    <div class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
-      <img id="lightboxImg" src="" alt="">
-      <div class="lightboxHint">ESC ou clique fora para fechar</div>
+<div class="lightboxOverlay" id="lightbox">
+  <div class="lightbox" role="dialog" aria-modal="true" aria-label="Imagem ampliada">
+    <button class="lightboxClose" id="lightboxClose" type="button" aria-label="Fechar zoom">✕</button>
+
+    <div class="lightboxNav">
+      <button class="navBtn" id="lbPrev" type="button" aria-label="Foto anterior">‹</button>
+      <button class="navBtn" id="lbNext" type="button" aria-label="Próxima foto">›</button>
     </div>
+
+    <img id="lightboxImg" src="" alt="">
+
+    <div class="lightboxHint" id="lightboxHint">Arraste para o lado para trocar • ESC ou clique fora para fechar</div>
+    <div class="lightboxCounter" id="lightboxCounter">1/1</div>
   </div>
+</div>
 
   <script>
     // ===== CONFIG =====
@@ -1309,8 +1413,13 @@ body::after{
     const modal = document.getElementById("carModal");
     const closeModalBtn = document.getElementById("closeModal");
     const modalCloseLink = document.getElementById("modalCloseLink");
+	const modalCloseBtn = document.getElementById("modalCloseBtn");
 
-const photoCounter = document.getElementById("photoCounter");
+	if(modalCloseBtn){
+	  modalCloseBtn.addEventListener("click", closeModal);
+	}
+
+    const photoCounter = document.getElementById("photoCounter");
 
     const modalMainImg = document.getElementById("modalMainImg");
     const modalThumbs = document.getElementById("modalThumbs");
@@ -1321,6 +1430,21 @@ const photoCounter = document.getElementById("photoCounter");
     const modalMeta = document.getElementById("modalMeta");
     const modalDesc = document.getElementById("modalDesc");
     const modalWhats = document.getElementById("modalWhats");
+	const modalInfoEl = document.querySelector(".modalInfo");
+	const moreInfoHint = document.getElementById("moreInfoHint");
+
+	function updateMoreInfoHint(){
+	  if(!modalInfoEl || !moreInfoHint) return;
+
+	  const canScroll = modalInfoEl.scrollHeight > (modalInfoEl.clientHeight + 2);
+	  const atBottom = (modalInfoEl.scrollTop + modalInfoEl.clientHeight) >= (modalInfoEl.scrollHeight - 4);
+
+	  moreInfoHint.style.display = (canScroll && !atBottom) ? "inline-flex" : "none";
+	}
+
+	if(modalInfoEl){
+	  modalInfoEl.addEventListener("scroll", updateMoreInfoHint, { passive:true });
+	}
 
     const prevImgBtn = document.getElementById("prevImg");
     const nextImgBtn = document.getElementById("nextImg");
@@ -1344,6 +1468,14 @@ function setMainImage(idx){
 	img.onload = () => {
 	  modalMainImg.src = img.src;
 	  modalMainImg.closest(".modalMain").classList.remove("loading");
+
+	  if(lightbox && lightbox.style.display === "flex"){
+		lightboxImg.src = img.src;
+		lightboxImg.alt = modalMainImg.alt;
+		if(lightboxCounter){
+		  lightboxCounter.textContent = `${currentIndex + 1}/${gallery.length || 1}`;
+		}
+	  }
 	};
 
   [...modalThumbs.querySelectorAll(".thumb")].forEach((t, i) => {
@@ -1421,6 +1553,11 @@ div.appendChild(document.createTextNode(String(v)));
 		  modalWhats.rel = "noopener";
 
 		  modal.style.display = "flex";
+				  if(modalInfoEl){
+		  modalInfoEl.scrollTop = 0;
+		  requestAnimationFrame(updateMoreInfoHint);
+		  setTimeout(updateMoreInfoHint, 120);
+		}
 		  document.body.style.overflow = "hidden";
 		  closeModalBtn.focus();
 		}
@@ -1533,32 +1670,96 @@ modalMainImg.addEventListener("touchend", (e) => {
 		// ===== Lightbox (ZOOM) =====
 		const lightbox = document.getElementById("lightbox");
 		const lightboxImg = document.getElementById("lightboxImg");
+		const lightboxClose = document.getElementById("lightboxClose");
+		const lbPrev = document.getElementById("lbPrev");
+		const lbNext = document.getElementById("lbNext");
+		const lightboxCounter = document.getElementById("lightboxCounter");
 
-		function openLightbox(src, alt){
-		  if(!src) return;
-		  lightboxImg.src = src;
-		  lightboxImg.alt = alt || "Imagem ampliada";
+		function syncLightboxUI(){
+		  if(!lightboxCounter) return;
+		  lightboxCounter.textContent = `${currentIndex + 1}/${gallery.length || 1}`;
+
+		  const hasMany = (gallery && gallery.length > 1);
+		  if(lbPrev) lbPrev.style.display = hasMany ? "" : "none";
+		  if(lbNext) lbNext.style.display = hasMany ? "" : "none";
+		}
+
+		function openLightbox(){
+		  if(!gallery || !gallery.length) return;
+
+		  lightboxImg.src = gallery[currentIndex];
+		  lightboxImg.alt = modalMainImg.alt || "Imagem ampliada";
 		  lightbox.style.display = "flex";
 		  document.body.style.overflow = "hidden";
+		  syncLightboxUI();
 		}
+
 		function closeLightbox(){
 		  lightbox.style.display = "none";
 		  lightboxImg.src = "";
-		  // se modal estiver aberto, continua travado
 		  document.body.style.overflow = (modal.style.display === "flex") ? "hidden" : "";
 		}
 
-		// Clique na imagem do modal abre zoom
-		modalMainImg.addEventListener("click", () => {
-		  openLightbox(modalMainImg.src, modalTitle.textContent);
-		});
+		function prevLightbox(){
+		  setMainImage(currentIndex - 1);
+		  syncLightboxUI();
+		}
 
-		// Fecha zoom clicando fora
+		function nextLightbox(){
+		  setMainImage(currentIndex + 1);
+		  syncLightboxUI();
+		}
+
+		modalMainImg.addEventListener("click", () => openLightbox());
+
+		if(lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
+		if(lbPrev) lbPrev.addEventListener("click", prevLightbox);
+		if(lbNext) lbNext.addEventListener("click", nextLightbox);
+
 		lightbox.addEventListener("click", (e) => {
 		  if(e.target === lightbox) closeLightbox();
 		});
 
-		// ESC: fecha lightbox primeiro; se não tiver, fecha modal
+		let lbStartX = null;
+		let lbStartY = null;
+
+		lightboxImg.addEventListener("touchstart", (e) => {
+		  const t = e.touches?.[0];
+		  if(!t) return;
+		  lbStartX = t.clientX;
+		  lbStartY = t.clientY;
+		}, { passive:true });
+
+		lightboxImg.addEventListener("touchmove", (e) => {
+		  if(lbStartX === null || lbStartY === null) return;
+		  const t = e.touches?.[0];
+		  if(!t) return;
+
+		  const dx = t.clientX - lbStartX;
+		  const dy = t.clientY - lbStartY;
+
+		  if(Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)){
+			e.preventDefault();
+		  }
+		}, { passive:false });
+
+		lightboxImg.addEventListener("touchend", (e) => {
+		  if(lbStartX === null || lbStartY === null) return;
+		  const t = e.changedTouches?.[0];
+		  if(!t) return;
+
+		  const dx = t.clientX - lbStartX;
+		  const dy = t.clientY - lbStartY;
+
+		  if(Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)){
+			if(dx > 0) prevLightbox();
+			else nextLightbox();
+		  }
+
+		  lbStartX = null;
+		  lbStartY = null;
+		}, { passive:true });
+
 		document.addEventListener("keydown", (e) => {
 		  if(e.key !== "Escape") return;
 
