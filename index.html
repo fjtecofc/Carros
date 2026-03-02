@@ -848,27 +848,38 @@ body::after{
   .modalActions a{ width:100%; }
 
 	.moreInfoHint{
-	  display:none; /* JS liga/desliga */
+	  display:none;
+	  position: sticky;
+	  bottom: 10px;
+	  z-index: 6;
+
 	  margin-top: 6px;
-	  padding: 8px 10px;
+	  padding: 10px 12px;
 	  border-radius: 999px;
-	  border:1px solid rgba(255,255,255,.12);
-	  background: rgba(0,0,0,.18);
-	  color: rgba(236,242,255,.92);
+	  border:1px solid rgba(255,255,255,12);
+	  background: rgba(0,0,0,18);
+	  color: rgba(236,242,255,92);
 	  font-size: 12px;
-	  align-self: flex-start;
+
+	  align-self: center;
+	  width: fit-content;
 
 	  cursor: pointer;
 	  appearance: none;
 	  -webkit-appearance: none;
-	  text-align: left;
+	  text-align: center;
+
+	  animation: moreHintPulse 1.2s ease-in-out infinite;
 	}
+
 	.moreInfoHint:active{
 	  transform: translateY(1px);
 	}
 
-  .thumb{ width:84px; height:62px; }
-}
+	@keyframes moreHintPulse{
+	  0%, 100% { transform: scale(1);   opacity: 1; }
+	  50%      { transform: scale(1.04); opacity: .92; }
+	}
     /* ===== Lightbox (zoom) ===== */
     .lightboxOverlay{
       position:fixed; inset:0; z-index:1001;
@@ -1357,7 +1368,6 @@ body::after{
               <h3 class="modalTitle" id="modalTitle">—</h3>
               <div class="modalSub" id="modalSub">—</div>
             </div>
-            <button class="closeBtn" id="closeModal" type="button">Fechar</button>
           </div>
 
           <div class="modalPrice" id="modalPrice">—</div>
@@ -1469,7 +1479,7 @@ body::after{
 		if(moreInfoHint && modalInfoEl){
 		  moreInfoHint.addEventListener("click", () => {
 			modalInfoEl.scrollBy({
-			  top: Math.max(220, Math.floor(modalInfoEl.clientHeight * 0.65)),
+			  top: modalInfoEl.scrollHeight,
 			  behavior: "smooth"
 			});
 			setTimeout(updateMoreInfoHint, 120);
@@ -1593,7 +1603,7 @@ div.appendChild(document.createTextNode(String(v)));
 		}
 
 		document.body.style.overflow = "hidden";
-		closeModalBtn.focus();
+       if(modalCloseBtn) modalCloseBtn.focus();
 		}
 
 		function closeModal(){
@@ -1604,13 +1614,15 @@ div.appendChild(document.createTextNode(String(v)));
 		  if(lightbox.style.display !== "flex") document.body.style.overflow = "";
 		}
 
-		closeModalBtn.addEventListener("click", closeModal);
+		if(closeModalBtn){
+		  closeModalBtn.addEventListener("click", closeModal);
+		}
 		modalCloseLink.addEventListener("click", (e)=>{ e.preventDefault(); closeModal(); });
-const modalOverlay = document.getElementById("carModal");
-// ...
-modalOverlay.addEventListener("click", (e) => {
-  if(e.target === modalOverlay) closeModal();
-});
+		const modalOverlay = document.getElementById("carModal");
+		
+		modalOverlay.addEventListener("click", (e) => {
+		  if(e.target === modalOverlay) closeModal();
+		});
 
 		prevImgBtn.addEventListener("click", () => setMainImage(currentIndex - 1));
 		nextImgBtn.addEventListener("click", () => setMainImage(currentIndex + 1));
