@@ -847,17 +847,25 @@ body::after{
 
   .modalActions a{ width:100%; }
 
-  .moreInfoHint{
-    display:none; /* JS liga/desliga */
-    margin-top: 6px;
-    padding: 8px 10px;
-    border-radius: 999px;
-    border:1px solid rgba(255,255,255,.12);
-    background: rgba(0,0,0,.18);
-    color: rgba(236,242,255,.92);
-    font-size: 12px;
-    align-self: flex-start;
-  }
+	.moreInfoHint{
+	  display:none; /* JS liga/desliga */
+	  margin-top: 6px;
+	  padding: 8px 10px;
+	  border-radius: 999px;
+	  border:1px solid rgba(255,255,255,.12);
+	  background: rgba(0,0,0,.18);
+	  color: rgba(236,242,255,.92);
+	  font-size: 12px;
+	  align-self: flex-start;
+
+	  cursor: pointer;
+	  appearance: none;
+	  -webkit-appearance: none;
+	  text-align: left;
+	}
+	.moreInfoHint:active{
+	  transform: translateY(1px);
+	}
 
   .thumb{ width:84px; height:62px; }
 }
@@ -1355,7 +1363,9 @@ body::after{
           <div class="modalPrice" id="modalPrice">—</div>
           <div class="modalMeta" id="modalMeta"></div>
           <div class="modalDesc" id="modalDesc">—</div>
-		  <div class="moreInfoHint" id="moreInfoHint">⬇️ Mais informações abaixo</div>
+		  <button class="moreInfoHint" id="moreInfoHint" type="button" aria-label="Ver mais informações">
+  ⬇️ Mais informações abaixo
+</button>
 
           <div class="modalActions">
             <a class="btn whats" id="modalWhats" href="#">💬 Quero esse no WhatsApp</a>
@@ -1436,15 +1446,28 @@ body::after{
 	function updateMoreInfoHint(){
 	  if(!modalInfoEl || !moreInfoHint) return;
 
-	  const canScroll = modalInfoEl.scrollHeight > (modalInfoEl.clientHeight + 2);
-	  const atBottom = (modalInfoEl.scrollTop + modalInfoEl.clientHeight) >= (modalInfoEl.scrollHeight - 4);
+	  const canScroll = modalInfoEl.scrollHeight > (modalInfoEl.clientHeight + 8);
+	  const remaining = modalInfoEl.scrollHeight - (modalInfoEl.scrollTop + modalInfoEl.clientHeight);
+	  
+	  const shouldShow = canScroll && remaining > 40;
 
-	  moreInfoHint.style.display = (canScroll && !atBottom) ? "inline-flex" : "none";
+	  moreInfoHint.style.display = shouldShow ? "inline-flex" : "none";
 	}
 
-	if(modalInfoEl){
-	  modalInfoEl.addEventListener("scroll", updateMoreInfoHint, { passive:true });
-	}
+		if(modalInfoEl){
+		  modalInfoEl.addEventListener("scroll", updateMoreInfoHint, { passive:true });
+		}
+
+		if(moreInfoHint && modalInfoEl){
+		  moreInfoHint.addEventListener("click", () => {
+			modalInfoEl.scrollBy({
+			  top: Math.max(220, Math.floor(modalInfoEl.clientHeight * 0.65)),
+			  behavior: "smooth"
+			});
+			// atualiza após o scroll começar
+			setTimeout(updateMoreInfoHint, 120);
+		  });
+		}
 
     const prevImgBtn = document.getElementById("prevImg");
     const nextImgBtn = document.getElementById("nextImg");
@@ -1478,9 +1501,9 @@ function setMainImage(idx){
 	  }
 	};
 
-  [...modalThumbs.querySelectorAll(".thumb")].forEach((t, i) => {
-    t.classList.toggle("active", i === currentIndex);
-  });
+	[...modalThumbs.querySelectorAll(".thumb")].forEach((t, i) => {
+	  t.classList.toggle("active", i === currentIndex);
+	});
 
   if(photoCounter){
     photoCounter.textContent = `${currentIndex + 1}/${gallery.length}`;
@@ -1552,14 +1575,16 @@ div.appendChild(document.createTextNode(String(v)));
 		  modalWhats.target = "_blank";
 		  modalWhats.rel = "noopener";
 
-		  modal.style.display = "flex";
-				  if(modalInfoEl){
+		modal.style.display = "flex";
+
+		if(modalInfoEl){
 		  modalInfoEl.scrollTop = 0;
 		  requestAnimationFrame(updateMoreInfoHint);
-		  setTimeout(updateMoreInfoHint, 120);
+		  setTimeout(updateMoreInfoHint, 150);
 		}
-		  document.body.style.overflow = "hidden";
-		  closeModalBtn.focus();
+
+		document.body.style.overflow = "hidden";
+		closeModalBtn.focus();
 		}
 
 		function closeModal(){
@@ -1778,8 +1803,8 @@ modalMainImg.addEventListener("touchend", (e) => {
   const clearSearch = document.getElementById("clearSearch");
   const resultsCount = document.getElementById("resultsCount");
 
-  const carCards = [...document.querySelectorAll(".inventory .car")];
-  const filterBtns = [...document.querySelectorAll("[data-filter]")];
+	const carCards = [...document.querySelectorAll(".inventory .car")];
+	const filterBtns = [...document.querySelectorAll("[data-filter]")];
   const activeFilters = new Set();
 
   function normalize(s){
