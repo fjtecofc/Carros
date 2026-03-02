@@ -991,6 +991,27 @@ body::after{
     white-space:normal;
   }
 }
+
+/* ===== Header no MOBILE: central + sem botão Whats ===== */
+@media (max-width: 980px){
+  /* some o botão do header */
+  #topWhats{ display:none !important; }
+
+  /* centraliza marca no meio */
+  header .nav{
+    justify-content:center;
+  }
+
+  header .brand{
+    margin: 0 auto;
+    justify-content:center;
+    text-align:center;
+  }
+
+  header .brand > div{
+    text-align:center;
+  }
+}
   </style>
 </head>
 
