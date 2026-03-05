@@ -1,0 +1,182 @@
+[
+  {
+    "id": "onix-lt-10-2019",
+    "badge": "Alta procura",
+    "badgeDot": true,
+    "thumb": "images/onix-1.webp",
+    "titleCard": "Onix LT 1.0 (Exemplo)",
+    "title": "Onix LT 1.0",
+    "sub": "2019 • Completo • Flex",
+    "price": "R$ 59.900",
+    "preview": [
+      { "k": "KM", "v": "58.000" },
+      { "k": "Câmbio", "v": "Manual" },
+      { "k": "Placa", "v": "Final 4" }
+    ],
+    "images": ["images/onix-1.webp", "images/onix-2.webp", "images/onix-3.webp", "images/onix-4.webp", "images/onix-5.webp"],
+    "desc": "Onix LT 1.0 — excelente para quem quer economia e manutenção barata.\n✅ Pontos fortes: econômico, fácil de manter, bom espaço interno e ótimo custo-benefício.\n🔎 Estado geral: bem alinhado e com boa pegada de direção (conforme vistoria na loja).\nTransparência: envio fotos/vídeo e todos os detalhes pelo WhatsApp antes de você vir.\n⏳ Disponibilidade: sujeito a venda (estoque gira rápido).",
+    "meta": {
+      "KM": "58.000",
+      "Câmbio": "Manual",
+      "Combustível": "Flex",
+      "Cor": "Prata",
+      "Portas": "3",
+      "Placa": "Final 4",
+      "Chave reserva": "Sim",
+      "IPVA": "Ok",
+      "Laudo": "Consulte",
+      "Revisão": "Em dia",
+      "Garantia": "Consulte"
+    }
+  },
+  {
+    "id": "creta-16-2020",
+    "badge": "Pronta entrega",
+    "badgeDot": true,
+    "thumb": "images/creta-1.webp",
+    "titleCard": "Creta 1.6 (Exemplo)",
+    "title": "Creta 1.6",
+    "sub": "2020 • SUV • Manual",
+    "price": "R$ 89.900",
+    "preview": [
+      { "k": "KM", "v": "62.000" },
+      { "k": "IPVA", "v": "Ok" },
+      { "k": "Revisão", "v": "Em dia" }
+    ],
+    "images": ["images/creta-1.webp", "images/creta-2.webp", "images/creta-3.webp", "images/creta-4.webp"],
+    "desc": "Creta 1.6 — SUV ideal pra família e pra quem quer conforto no dia a dia.\n✅ Pontos fortes: posição de dirigir alta, espaço interno, porta-malas bom e câmbio automático confortável.\n🔎 Estado geral: revisões em dia e documentação ok (conforme conferência na loja).\nTransparência: te mando fotos/vídeo, ficha e condições antes de agendar a visita.\n⏳ Disponibilidade: sujeito a venda (estoque gira rápido).",
+    "meta": {
+      "KM": "62.000",
+      "Câmbio": "Manual",
+      "Combustível": "Flex",
+      "Cor": "Prata",
+      "Portas": "4",
+      "Placa": "Final 4",
+      "Chave reserva": "Sim",
+      "IPVA": "Ok",
+      "Laudo": "Consulte",
+      "Revisão": "Em dia",
+      "Garantia": "Consulte"
+    }
+  },
+  {
+    "id": "civic-ex-2018",
+    "badge": "Oportunidade",
+    "badgeDot": true,
+    "thumb": "images/civic-1.webp",
+    "titleCard": "Civic EX (Exemplo)",
+    "title": "Civic EX",
+    "sub": "2018 • Sedan • Automático",
+    "price": "R$ 109.900",
+    "preview": [
+      { "k": "KM", "v": "74.000" },
+      { "k": "Doc", "v": "Ok" },
+      { "k": "Chaves", "v": "Reserva" }
+    ],
+    "images": ["images/civic-1.webp", "images/civic-2.webp", "images/civic-3.webp", "images/civic-4.webp"],
+    "desc": "Civic EX — pra quem quer conforto, dirigibilidade e acabamento acima da média.\n✅ Pontos fortes: estabilidade, consumo equilibrado, conforto e bom valor de revenda.\n🔎 Estado geral: documentação ok e pronto para transferência (conforme conferência).\n🧾 Transparência: envio fotos/vídeo e detalhes completos antes da visita.\n⏳ Disponibilidade: sujeito a venda.",
+    "meta": {
+      "KM": "74.000",
+      "Câmbio": "Automático",
+      "Combustível": "Flex",
+      "Cor": "Prata",
+      "Portas": "4",
+      "Placa": "Final 2",
+      "Chave reserva": "Sim",
+      "IPVA": "Consulte",
+      "Laudo": "Consulte",
+      "Revisão": "Ok",
+      "Garantia": "Consulte"
+    }
+  },
+  {
+    "id": "hb20-comfort-2021",
+    "badge": "Melhor custo-benefício",
+    "badgeDot": true,
+    "thumb": "images/hb20-1.webp",
+    "titleCard": "HB20 Comfort (Exemplo)",
+    "title": "HB20 Comfort",
+    "sub": "2021 • Econômico • Flex • Hatch",
+    "price": "R$ 69.900",
+    "preview": [
+      { "k": "KM", "v": "45.000" },
+      { "k": "Câmbio", "v": "Manual" },
+      { "k": "Garantia", "v": "Consulte" }
+    ],
+    "images": ["images/hb20-1.webp", "images/hb20-2.webp", "images/hb20-3.webp"],
+    "desc": "HB20 Comfort — ótimo para dia a dia com baixo custo de manutenção.\n✅ Pontos fortes: econômico, confortável, bom pacote e ótima revenda.\n🔎 Estado geral: vistoriado e pronto para transferir (conforme conferência na loja).\nTransparência: mando fotos/vídeo e condições completas pelo WhatsApp.\n⏳ Disponibilidade: sujeito a venda.",
+    "meta": {
+      "KM": "45.000",
+      "Câmbio": "Manual",
+      "Combustível": "Flex",
+      "Cor": "Prata",
+      "Portas": "4",
+      "Placa": "Final 3",
+      "Chave reserva": "Consulte",
+      "IPVA": "Ok",
+      "Laudo": "Consulte",
+      "Revisão": "Ok",
+      "Garantia": "Consulte"
+    }
+  },
+  {
+    "id": "compass-2019",
+    "badge": "Família",
+    "badgeDot": true,
+    "thumb": "images/compass-1.webp",
+    "titleCard": "Compass (Exemplo)",
+    "title": "Compass",
+    "sub": "2019 • SUV • Automático",
+    "price": "R$ 119.900",
+    "preview": [
+      { "k": "KM", "v": "79.000" },
+      { "k": "Laudo", "v": "Ok" },
+      { "k": "Entrada", "v": "Consulte" }
+    ],
+    "images": ["images/compass-1.webp", "images/compass-2.webp", "images/compass-3.webp"],
+    "desc": "Compass — SUV com conforto e presença, excelente para família e estrada.\n✅ Pontos fortes: acabamento, dirigibilidade, estabilidade e posição de dirigir.\n🔎 Estado geral: documentação ok e pronto para transferência.\nTransparência: mando fotos/vídeo, detalhes e condições antes de você vir.\n⏳ Disponibilidade: sujeito a venda.",
+    "meta": {
+      "KM": "79.000",
+      "Câmbio": "Automático",
+      "Combustível": "Flex",
+      "Cor": "Prata",
+      "Portas": "4",
+      "Placa": "Final 5",
+      "Chave reserva": "Consulte",
+      "IPVA": "Consulte",
+      "Laudo": "Ok",
+      "Revisão": "Consulte",
+      "Garantia": "Consulte"
+    }
+  },
+  {
+    "id": "corolla-xei-2017",
+    "badge": "Conforto",
+    "badgeDot": true,
+    "thumb": "images/corolla-1.webp",
+    "titleCard": "Corolla XEi (Exemplo)",
+    "title": "Corolla XEi",
+    "sub": "2017 • Sedan • Automático",
+    "price": "R$ 99.900",
+    "preview": [
+      { "k": "KM", "v": "88.000" },
+      { "k": "Doc", "v": "Ok" },
+      { "k": "Revisão", "v": "Ok" }
+    ],
+    "images": ["images/corolla-1.webp", "images/corolla-2.webp", "images/corolla-3.webp"],
+    "desc": "Corolla XEi — referência em conforto e confiabilidade.\n✅ Pontos fortes: mecânica robusta, conforto, baixa desvalorização e revenda excelente.\n🔎 Estado geral: documentação ok e pronto para transferir (conforme conferência).\nTransparência: mando fotos/vídeo, ficha e condições pelo WhatsApp.\nDisponibilidade: sujeito a venda.",
+    "meta": {
+      "KM": "88.000",
+      "Câmbio": "Automático",
+      "Combustível": "Flex",
+      "Cor": "Prata",
+      "Portas": "4",
+      "Placa": "Final 6",
+      "Chave reserva": "Consulte",
+      "IPVA": "Consulte",
+      "Laudo": "Consulte",
+      "Revisão": "Ok",
+      "Garantia": "Consulte"
+    }
+  }
+]
