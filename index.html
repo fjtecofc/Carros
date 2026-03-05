@@ -325,6 +325,115 @@ body::after{
   color: rgba(236,242,255,.9);
   font-size:13px;
 }
+/* ==== Chip botão (Filtro avançado) ==== */
+button.chip, .chip#openAdvancedFilters {
+  cursor: pointer;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  font: inherit;
+}
+
+/* garante que o botão tenha o MESMO visual do chip */
+button.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+/* ==== Modal overlay (Filtro Avançado) ==== */
+#advModal {
+  display: none;            /* começa fechado */
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  padding: 16px;
+  background: rgba(0,0,0,.55);
+  align-items: center;
+  justify-content: center;
+}
+
+/* card do modal */
+#advModal .modal {
+  width: min(980px, 100%);
+  max-height: min(78vh, 720px);
+  overflow: auto;
+  border-radius: 16px;
+  background: #111;
+  color: #fff;
+  box-shadow: 0 20px 60px rgba(0,0,0,.45);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+/* header / footer */
+#advModal .modalHead,
+#advModal .modalFoot {
+  position: sticky;
+  background: #111;
+  z-index: 1;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+#advModal .modalFoot {
+  bottom: 0;
+  border-top: 1px solid rgba(255,255,255,.08);
+  border-bottom: 0;
+}
+#advModal .modalHead { top: 0; }
+
+/* corpo */
+#advModal .modalBody { padding: 14px 16px; }
+
+/* grid responsiva */
+#advModal .grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+@media (max-width: 900px) {
+  #advModal .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  #advModal { padding: 10px; }
+  #advModal .grid { grid-template-columns: 1fr; }
+  #advModal .modal { max-height: 86vh; border-radius: 14px; }
+}
+
+/* inputs */
+#advModal .lbl {
+  display: block;
+  font-size: 12px;
+  opacity: .85;
+  margin-bottom: 6px;
+}
+#advModal .input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  outline: none;
+}
+#advModal .input:focus {
+  border-color: rgba(255,255,255,.22);
+}
+
+/* botão fechar */
+#advModal .iconBtn {
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+}
+#advModal .iconBtn:hover { background: rgba(255,255,255,.10); }
+
+/* botões do rodapé */
+#advModal .btn {
+  cursor: pointer;
+}
 	/* ====== Estoque ====== */
     section{padding:18px 0 34px}
     .section-head{
@@ -1884,17 +1993,45 @@ function initSearchFilters() {
     const q = searchInput?.value || "";
     let visible = 0;
 
+// ===== aplica filtros avançados (se existirem) =====
+const adv = window.__ADV_FILTERS__ || {};
+let okAdv = true;
+
+function norm(s){
+  return (s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+}
+
+const info = card.querySelector(".carInfo");
+const priceNum = info?.dataset.price ? Number(String(info.dataset.price).replace(/[^\d]/g,"")) : null;
+const subTxt = norm(info?.dataset.sub || "");
+let metaObj = {};
+try { metaObj = JSON.parse(info?.dataset.meta || "{}"); } catch {}
+
+const kmNum = metaObj["KM"] ? Number(String(metaObj["KM"]).replace(/[^\d]/g,"")) : null;
+const gearTxt = norm(metaObj["Câmbio"] || "");
+const fuelTxt = norm(metaObj["Combustível"] || "");
+const colorTxt = norm(metaObj["Cor"] || "");
+
+if(adv.priceMin != null && (priceNum == null || priceNum < adv.priceMin)) okAdv = false;
+if(adv.priceMax != null && (priceNum == null || priceNum > adv.priceMax)) okAdv = false;
+
+if(adv.kmMax != null && (kmNum == null || kmNum > adv.kmMax)) okAdv = false;
+
+if(adv.gear && !gearTxt.includes(norm(adv.gear))) okAdv = false;
+if(adv.fuel && !fuelTxt.includes(norm(adv.fuel))) okAdv = false;
+if(adv.colorText && !colorTxt.includes(norm(adv.colorText))) okAdv = false;
+
+if(adv.type){
+  const t = norm(adv.type);
+  if(!subTxt.includes(t)) okAdv = false;
+}
+
+if(adv.modelText){
+  const q = norm(adv.modelText);
+  if(!text.includes(q)) okAdv = false; // usa o index de texto completo
+}
     index.forEach(({card, text}) => {
-      const okText = matchesQuerySmart(text, q);
-
-      let okFilters = true;
-      for(const f of activeFilters){
-        if(!matchesQuickFilter(card, f)){ okFilters = false; break; }
-      }
-
-      const ok = okText && okFilters;
-      card.style.display = ok ? "" : "none";
-      if(ok) visible++;
+	const ok = okText && okFilters && okAdv;
     });
 
     if(resultsCount) resultsCount.textContent = `${visible} encontrados`;
@@ -1937,6 +2074,8 @@ function initSearchFilters() {
       }
 
       applyFilter();
+	  // expõe para o filtro avançado chamar
+window.__APPLY_ALL_FILTERS__ = applyFilter;
     });
   });
 }
@@ -2139,8 +2278,18 @@ function initAdvancedFilters(carsRaw = []) {
   closeBtn?.addEventListener("click", hide);
   advModal?.addEventListener("click", (e) => { if(e.target === advModal) hide(); });
 
-  applyBtn?.addEventListener("click", () => { applyAdvanced(); hide(); });
-  clearBtn?.addEventListener("click", () => { clearUI(); window.__ADV_FILTERS__ = {}; applyAdvanced(); });
+applyBtn?.addEventListener("click", () => {
+  window.__ADV_FILTERS__ = readFilters();  // salva filtros avançados
+  hide();
+  // reaplica o filtro principal (chips + busca) levando em conta o avançado
+  if (window.__APPLY_ALL_FILTERS__) window.__APPLY_ALL_FILTERS__();
+});
+
+clearBtn?.addEventListener("click", () => {
+  clearUI();
+  window.__ADV_FILTERS__ = {};
+  if (window.__APPLY_ALL_FILTERS__) window.__APPLY_ALL_FILTERS__();
+});
 
   // começa fechado
   hide();
