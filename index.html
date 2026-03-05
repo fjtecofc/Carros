@@ -1147,7 +1147,8 @@ body::after{
     <a class="btn whats" id="floatWhats" href="#">💬 WhatsApp</a>
     <a class="btn small" href="#topo">⬆️ Topo</a>
   </div>
-<div class="modal" id="advModal" aria-hidden="true">
+<div class="modalOverlay" id="advModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Filtro avançado">
   <div class="modalCard" style="max-width: 920px;">
     <div class="modalHead">
       <div>
@@ -1249,6 +1250,7 @@ body::after{
       <button class="btn" id="applyAdv" type="button">Aplicar</button>
     </div>
   </div>
+</div>
 </div>
   <!-- ===== Modal com Galeria ===== -->
   <div class="modalOverlay" id="carModal">
@@ -1370,43 +1372,49 @@ async function loadCarsFromJson() {
 
   inventory.innerHTML = cars.map(car => {
 
-    const preview = (car.preview || []).slice(0,3).map(p =>
-      `<div><b>${p.k}</b><br/>${p.v}</div>`
-    ).join("");
+	const kmTxt = car.meta?.KM || (car.km != null ? String(car.km).replace(/\B(?=(\d{3})+(?!\d))/g, ".") : "");
+	const cambioTxt = car.meta?.["Câmbio"] || car.gear || "";
+	const placaTxt = car.meta?.Placa || "";
+
+	const preview = [
+	  { k: "KM", v: kmTxt || "—" },
+	  { k: "Câmbio", v: cambioTxt || "—" },
+	  { k: "Placa", v: placaTxt || "—" }
+	].map(p => `<div><b>${p.k}</b><br/>${p.v}</div>`).join("");
 
     const imagesJson = JSON.stringify(car.images || []);
     const metaJson = JSON.stringify(car.meta || {});
 
-    return `
-      <article class="car" data-car-id="${car.id}">
-        <div class="photo">
-          <img class="car-img" src="${car.thumb}" alt="${car.title}">
-        </div>
+		return `
+		  <article class="car" data-car-id="${car.id}">
+			<div class="photo">
+			  <img class="car-img" src="${car.thumb}" alt="${car.title}">
+			</div>
 
-        <div class="content">
-          <h3>${car.title}</h3>
-          <div class="subtitle">${car.sub}</div>
-          <div class="price">${car.price}</div>
-          <div class="meta">${preview}</div>
-        </div>
+			<div class="content">
+			  <h3>${car.title}</h3>
+			  <div class="subtitle">${car.sub}</div>
+			  <div class="price">${car.price}</div>
+			  <div class="meta">${preview}</div>
+			</div>
 
-        <div class="actions">
-          <a class="btn small carInfo"
-            data-title="${car.title}"
-            data-sub="${car.sub}"
-            data-price="${car.price}"
-            data-img="${car.thumb}"
-            data-images='${imagesJson}'
-            data-desc="${car.desc}"
-            data-meta='${metaJson}'
-          >Detalhes</a>
-        </div>
-      </article>
-    `;
-  }).join("");
+			<div class="actions">
+			  <a class="btn small carInfo"
+				data-title="${car.title}"
+				data-sub="${car.sub}"
+				data-price="${car.price}"
+				data-img="${car.thumb}"
+				data-images='${imagesJson}'
+				data-desc="${car.desc}"
+				data-meta='${metaJson}'
+			  >Detalhes</a>
+			</div>
+		  </article>
+		`;
+	  }).join("");
 
-  return cars;
-}
+	  return cars;
+	}
 
 // escapes simples (pra não quebrar HTML/atributos)
 function escapeHtml(s) {
@@ -1956,8 +1964,18 @@ function initAdvancedFilters(carsRaw = []) {
   // Guardar filtros aplicados globalmente
   window.__ADV_FILTERS__ = window.__ADV_FILTERS__ || {};
 
-  function show(){ if(advModal){ advModal.style.display="block"; advModal.setAttribute("aria-hidden","false"); } }
-  function hide(){ if(advModal){ advModal.style.display="none"; advModal.setAttribute("aria-hidden","true"); } }
+	function show(){
+	  if(!advModal) return;
+	  advModal.style.display = "flex";
+	  advModal.setAttribute("aria-hidden","false");
+	  document.body.style.overflow = "hidden";
+	}
+	function hide(){
+	  if(!advModal) return;
+	  advModal.style.display = "none";
+	  advModal.setAttribute("aria-hidden","true");
+	  document.body.style.overflow = "";
+	}
 
   function normalize(s){
     return (s || "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
