@@ -1082,7 +1082,7 @@ body::after{
 		<button class="pillBtn" type="button" data-filter="Automático">⚙️ Automático</button>
 		<button class="pillBtn" type="button" data-filter="Manual">⚙️ Manual</button>
 		<button class="pillBtn" type="button" data-filter="Ate80">💸 Até R$ 80k</button>
-		<button class="pillBtn" type="button" data-filter="ResetAll">♻️ Reset</button>
+		<button class="chip" id="openAdvancedFilters" type="button">Filtro avançado</button>
 	  </div>
 	</div>
 <div id="emptyState" style="display:none; text-align:center; color:rgba(185,197,238,.85); padding:16px 0;">
@@ -1147,7 +1147,109 @@ body::after{
     <a class="btn whats" id="floatWhats" href="#">💬 WhatsApp</a>
     <a class="btn small" href="#topo">⬆️ Topo</a>
   </div>
+<div class="modal" id="advModal" aria-hidden="true">
+  <div class="modalCard" style="max-width: 920px;">
+    <div class="modalHead">
+      <div>
+        <h3 style="margin:0">Filtro avançado</h3>
+        <div class="muted" style="margin-top:4px">Escolha os filtros e clique em Aplicar.</div>
+      </div>
+      <button class="iconBtn" id="closeAdv" type="button">✕</button>
+    </div>
 
+    <div class="modalBody">
+      <div class="grid" style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+        <div>
+          <label class="lbl">Marca</label>
+          <select id="fBrand" class="input">
+            <option value="">Todas</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="lbl">Modelo (texto)</label>
+          <input id="fModel" class="input" placeholder="Ex: Civic, Corolla, HB20">
+        </div>
+
+        <div>
+          <label class="lbl">Tipo</label>
+          <select id="fType" class="input">
+            <option value="">Todos</option>
+            <option value="SUV">SUV</option>
+            <option value="Sedan">Sedan</option>
+            <option value="Hatch">Hatch</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="lbl">Ano (mín)</label>
+          <input id="fYearMin" class="input" type="number" placeholder="Ex: 2018">
+        </div>
+
+        <div>
+          <label class="lbl">Ano (máx)</label>
+          <input id="fYearMax" class="input" type="number" placeholder="Ex: 2022">
+        </div>
+
+        <div>
+          <label class="lbl">KM (máx)</label>
+          <input id="fKmMax" class="input" type="number" placeholder="Ex: 80000">
+        </div>
+
+        <div>
+          <label class="lbl">Preço (mín)</label>
+          <input id="fPriceMin" class="input" type="number" placeholder="Ex: 50000">
+        </div>
+
+        <div>
+          <label class="lbl">Preço (máx)</label>
+          <input id="fPriceMax" class="input" type="number" placeholder="Ex: 90000">
+        </div>
+
+        <div>
+          <label class="lbl">Câmbio</label>
+          <select id="fGear" class="input">
+            <option value="">Todos</option>
+            <option value="Automático">Automático</option>
+            <option value="Manual">Manual</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="lbl">Combustível</label>
+          <select id="fFuel" class="input">
+            <option value="">Todos</option>
+            <option value="Flex">Flex</option>
+            <option value="Gasolina">Gasolina</option>
+            <option value="Diesel">Diesel</option>
+            <option value="Elétrico">Elétrico</option>
+            <option value="Híbrido">Híbrido</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="lbl">Cor</label>
+          <input id="fColor" class="input" placeholder="Ex: Prata, Preto">
+        </div>
+
+        <div>
+          <label class="lbl">Portas</label>
+          <select id="fDoors" class="input">
+            <option value="">Todas</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="modalFoot" style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn ghost" id="clearAdv" type="button">Limpar</button>
+      <button class="btn" id="applyAdv" type="button">Aplicar</button>
+    </div>
+  </div>
+</div>
   <!-- ===== Modal com Galeria ===== -->
   <div class="modalOverlay" id="carModal">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Detalhes do carro">
@@ -1235,8 +1337,9 @@ body::after{
     // Year
     document.getElementById("year").textContent = new Date().getFullYear();
 	// Carrega carros + depois liga filtros/busca
-	loadCarsFromJson().then(() => {
+	loadCarsFromJson().then((cars) => {
 	  initSearchFilters();
+	  initAdvancedFilters(cars); 
 	});
 
     // Whats CTAs fixos
@@ -1256,58 +1359,53 @@ body::after{
 // ===== CARREGAR ESTOQUE DO cars.json (AUTO) =====
 async function loadCarsFromJson() {
   const inventory = document.getElementById("inventory");
-  if (!inventory) return;
+  if (!inventory) return [];
 
-  const cars = await fetch("data/cars.json").then(r => r.json());
+  console.log("Carregando cars.json...");
+
+  const cars = await fetch("./data/cars.json").then(r => r.json());
+
+  console.log("Cars carregados:", cars);
+  console.log("Quantidade de carros:", cars.length);
 
   inventory.innerHTML = cars.map(car => {
-    const preview = (car.preview || []).slice(0, 3).map(p =>
-      `<div><b>${escapeHtml(p.k)}</b><br/>${escapeHtml(p.v)}</div>`
+
+    const preview = (car.preview || []).slice(0,3).map(p =>
+      `<div><b>${p.k}</b><br/>${p.v}</div>`
     ).join("");
 
     const imagesJson = JSON.stringify(car.images || []);
     const metaJson = JSON.stringify(car.meta || {});
 
     return `
-      <article class="car" data-car-id="${escapeHtml(car.id)}">
+      <article class="car" data-car-id="${car.id}">
         <div class="photo">
-          <img class="car-img" src="${escapeHtml(car.thumb)}" alt="${escapeHtml(car.titleCard || car.title)}" loading="lazy" decoding="async">
-          ${car.badge ? `
-            <div class="badge">
-              ${car.badgeDot ? `<span class="dot"></span>` : ``}
-              ${escapeHtml(car.badge)}
-            </div>
-          ` : ``}
+          <img class="car-img" src="${car.thumb}" alt="${car.title}">
         </div>
 
         <div class="content">
-          <div class="titleRow">
-            <div>
-              <h3>${escapeHtml(car.titleCard || car.title)}</h3>
-              <div class="subtitle">${escapeHtml(car.sub || "")}</div>
-            </div>
-            <div class="price">${escapeHtml(car.price || "")}</div>
-          </div>
-
-          <div class="meta">
-            ${preview}
-          </div>
+          <h3>${car.title}</h3>
+          <div class="subtitle">${car.sub}</div>
+          <div class="price">${car.price}</div>
+          <div class="meta">${preview}</div>
         </div>
 
         <div class="actions">
-          <a class="btn small carInfo" href="#"
-            data-title="${escapeAttr(car.title || "")}"
-            data-sub="${escapeAttr(car.sub || "")}"
-            data-price="${escapeAttr(car.price || "")}"
-            data-img="${escapeAttr(car.thumb || "")}"
-            data-images='${imagesJson.replace(/'/g, "\\'")}'
-            data-desc="${escapeAttr((car.desc || "").replace(/\n/g, "\\n"))}"
-            data-meta='${metaJson.replace(/'/g, "\\'")}'
+          <a class="btn small carInfo"
+            data-title="${car.title}"
+            data-sub="${car.sub}"
+            data-price="${car.price}"
+            data-img="${car.thumb}"
+            data-images='${imagesJson}'
+            data-desc="${car.desc}"
+            data-meta='${metaJson}'
           >Detalhes</a>
         </div>
       </article>
     `;
   }).join("");
+
+  return cars;
 }
 
 // escapes simples (pra não quebrar HTML/atributos)
@@ -1833,6 +1931,201 @@ function initSearchFilters() {
       applyFilter();
     });
   });
+}
+// ===== Filtro Avançado (mini WebMotors) =====
+function initAdvancedFilters(carsRaw = []) {
+  const advModal = document.getElementById("advModal");
+  const openBtn = document.getElementById("openAdvancedFilters");
+  const closeBtn = document.getElementById("closeAdv");
+  const applyBtn = document.getElementById("applyAdv");
+  const clearBtn = document.getElementById("clearAdv");
+
+  const fBrand = document.getElementById("fBrand");
+  const fModel = document.getElementById("fModel");
+  const fType = document.getElementById("fType");
+  const fYearMin = document.getElementById("fYearMin");
+  const fYearMax = document.getElementById("fYearMax");
+  const fKmMax = document.getElementById("fKmMax");
+  const fPriceMin = document.getElementById("fPriceMin");
+  const fPriceMax = document.getElementById("fPriceMax");
+  const fGear = document.getElementById("fGear");
+  const fFuel = document.getElementById("fFuel");
+  const fColor = document.getElementById("fColor");
+  const fDoors = document.getElementById("fDoors");
+
+  // Guardar filtros aplicados globalmente
+  window.__ADV_FILTERS__ = window.__ADV_FILTERS__ || {};
+
+  function show(){ if(advModal){ advModal.style.display="block"; advModal.setAttribute("aria-hidden","false"); } }
+  function hide(){ if(advModal){ advModal.style.display="none"; advModal.setAttribute("aria-hidden","true"); } }
+
+  function normalize(s){
+    return (s || "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+  }
+
+  function num(v){
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  // Preenche marcas (se tiver brand)
+  if(fBrand){
+    const brands = [...new Set(carsRaw.map(c => c.brand).filter(Boolean))].sort();
+    fBrand.innerHTML = `<option value="">Todas</option>` + brands.map(b => `<option value="${b}">${b}</option>`).join("");
+  }
+
+  function readFilters(){
+    return {
+      brand: fBrand?.value || "",
+      modelText: fModel?.value || "",
+      type: fType?.value || "",
+      yearMin: num(fYearMin?.value),
+      yearMax: num(fYearMax?.value),
+      kmMax: num(fKmMax?.value),
+      priceMin: num(fPriceMin?.value),
+      priceMax: num(fPriceMax?.value),
+      gear: fGear?.value || "",
+      fuel: fFuel?.value || "",
+      colorText: fColor?.value || "",
+      doors: num(fDoors?.value)
+    };
+  }
+
+  function clearUI(){
+    if(fBrand) fBrand.value = "";
+    if(fModel) fModel.value = "";
+    if(fType) fType.value = "";
+    if(fYearMin) fYearMin.value = "";
+    if(fYearMax) fYearMax.value = "";
+    if(fKmMax) fKmMax.value = "";
+    if(fPriceMin) fPriceMin.value = "";
+    if(fPriceMax) fPriceMax.value = "";
+    if(fGear) fGear.value = "";
+    if(fFuel) fFuel.value = "";
+    if(fColor) fColor.value = "";
+    if(fDoors) fDoors.value = "";
+  }
+
+  // Aplica filtro avançado em cima dos cards já renderizados
+  function applyAdvanced(){
+    const filters = readFilters();
+    window.__ADV_FILTERS__ = filters;
+
+    const cards = [...document.querySelectorAll(".inventory .car")];
+
+    let visible = 0;
+
+    cards.forEach(card => {
+      const info = card.querySelector(".carInfo");
+      const carId = card.getAttribute("data-car-id");
+      const car = carsRaw.find(c => c.id === carId) || null;
+
+      // Fallback se não achar o carro pelo id:
+      const title = normalize(info?.dataset.title || card.querySelector("h3")?.textContent || "");
+      const sub = normalize(info?.dataset.sub || "");
+      const metaStr = info?.dataset.meta || "";
+      const meta = (() => { try { return JSON.parse(metaStr || "{}"); } catch { return {}; } })();
+
+      // Usar dados "fortes" se existirem (brand/model/year/priceValue/km...)
+      const brand = normalize(car?.brand || "");
+      const model = normalize(car?.model || "");
+      const type = normalize(car?.type || "");
+      const year = car?.year ?? null;
+      const km = car?.km ?? (meta["KM"] ? Number(String(meta["KM"]).replace(/[^\d]/g,"")) : null);
+      const priceValue = car?.priceValue ?? (info?.dataset.price ? Number(String(info.dataset.price).replace(/[^\d]/g,"")) : null);
+      const gear = normalize(car?.gear || meta["Câmbio"] || "");
+      const fuel = normalize(car?.fuel || meta["Combustível"] || "");
+      const color = normalize(car?.color || meta["Cor"] || "");
+      const doors = car?.doors ?? (meta["Portas"] ? Number(String(meta["Portas"]).replace(/[^\d]/g,"")) : null);
+
+      // Comparações
+      let ok = true;
+
+      if(filters.brand && brand !== normalize(filters.brand)) ok = false;
+
+      if(ok && filters.modelText){
+        const q = normalize(filters.modelText);
+        if(!(title.includes(q) || sub.includes(q) || model.includes(q))) ok = false;
+      }
+
+      if(ok && filters.type){
+        const t = normalize(filters.type);
+        // Se não tiver type, tenta achar no sub
+        if(type){
+          if(type !== t) ok = false;
+        }else{
+          if(!sub.includes(t)) ok = false;
+        }
+      }
+
+      if(ok && filters.yearMin != null){
+        if(year == null) {
+          // tenta achar 4 dígitos no sub
+          const m = (sub.match(/\b(19|20)\d{2}\b/) || [])[0];
+          const y = m ? Number(m) : null;
+          if(y == null || y < filters.yearMin) ok = false;
+        } else if(year < filters.yearMin) ok = false;
+      }
+
+      if(ok && filters.yearMax != null){
+        if(year == null) {
+          const m = (sub.match(/\b(19|20)\d{2}\b/) || [])[0];
+          const y = m ? Number(m) : null;
+          if(y == null || y > filters.yearMax) ok = false;
+        } else if(year > filters.yearMax) ok = false;
+      }
+
+      if(ok && filters.kmMax != null){
+        if(km == null || km > filters.kmMax) ok = false;
+      }
+
+      if(ok && filters.priceMin != null){
+        if(priceValue == null || priceValue < filters.priceMin) ok = false;
+      }
+
+      if(ok && filters.priceMax != null){
+        if(priceValue == null || priceValue > filters.priceMax) ok = false;
+      }
+
+      if(ok && filters.gear){
+        if(!gear.includes(normalize(filters.gear))) ok = false;
+      }
+
+      if(ok && filters.fuel){
+        if(!fuel.includes(normalize(filters.fuel))) ok = false;
+      }
+
+      if(ok && filters.colorText){
+        const q = normalize(filters.colorText);
+        if(!color.includes(q)) ok = false;
+      }
+
+      if(ok && filters.doors != null){
+        if(doors == null || doors !== filters.doors) ok = false;
+      }
+
+      // Importante: combinar com o filtro simples e busca?
+      // Aqui a gente só aplica o avançado. O simples você já tem.
+      // Se quiser combinar, eu te passo a versão “unificada”.
+      card.style.display = ok ? "" : "none";
+      if(ok) visible++;
+    });
+
+    const resultsCount = document.getElementById("resultsCount");
+    const emptyState = document.getElementById("emptyState");
+    if(resultsCount) resultsCount.textContent = `${visible} encontrados`;
+    if(emptyState) emptyState.style.display = (visible === 0) ? "block" : "none";
+  }
+
+  openBtn?.addEventListener("click", show);
+  closeBtn?.addEventListener("click", hide);
+  advModal?.addEventListener("click", (e) => { if(e.target === advModal) hide(); });
+
+  applyBtn?.addEventListener("click", () => { applyAdvanced(); hide(); });
+  clearBtn?.addEventListener("click", () => { clearUI(); window.__ADV_FILTERS__ = {}; applyAdvanced(); });
+
+  // começa fechado
+  hide();
 }
 } catch (err) {
   console.error("Erro no script do site:", err);
