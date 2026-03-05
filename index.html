@@ -326,13 +326,23 @@ body::after{
   font-size:13px;
 }
 /* ==== Chip botão (Filtro avançado) ==== */
-button.chip, .chip#openAdvancedFilters {
-  cursor: pointer;
-  appearance: none;
-  border: 0;
-  background: transparent;
-  font: inherit;
+#openAdvancedFilters{
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(0,0,0,.18);
+  color: var(--muted);
+  font-size:12px;
 }
+#openAdvancedFilters:hover{
+  transform:translateY(-1px);
+  border-color:rgba(255,255,255,.18);
+}
+#openAdvancedFilters:active{ transform:translateY(0); }
 
 /* garante que o botão tenha o MESMO visual do chip */
 button.chip {
@@ -1986,57 +1996,77 @@ function initSearchFilters() {
     return terms.every(term => text.includes(term));
   }
 
-  function applyFilter(){
-    const carCards = [...document.querySelectorAll(".inventory .car")];
-    const index = carCards.map(card => ({ card, text: buildSearchText(card) }));
+	function applyFilter(){
+	  const carCards = [...document.querySelectorAll(".inventory .car")];
 
-    const q = searchInput?.value || "";
-    let visible = 0;
+	  // monta índice de texto (1x por apply)
+	  const index = carCards.map(card => ({ card, text: buildSearchText(card) }));
 
-// ===== aplica filtros avançados (se existirem) =====
-const adv = window.__ADV_FILTERS__ || {};
-let okAdv = true;
+	  const q = searchInput?.value || "";
+	  let visible = 0;
 
-function norm(s){
-  return (s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
-}
+	  // filtros avançados (salvos globalmente)
+	  const adv = window.__ADV_FILTERS__ || {};
 
-const info = card.querySelector(".carInfo");
-const priceNum = info?.dataset.price ? Number(String(info.dataset.price).replace(/[^\d]/g,"")) : null;
-const subTxt = norm(info?.dataset.sub || "");
-let metaObj = {};
-try { metaObj = JSON.parse(info?.dataset.meta || "{}"); } catch {}
+	  function norm2(s){
+		return (s||"").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+	  }
 
-const kmNum = metaObj["KM"] ? Number(String(metaObj["KM"]).replace(/[^\d]/g,"")) : null;
-const gearTxt = norm(metaObj["Câmbio"] || "");
-const fuelTxt = norm(metaObj["Combustível"] || "");
-const colorTxt = norm(metaObj["Cor"] || "");
+	  index.forEach(({ card, text }) => {
+		// 1) busca normal
+		const okText = matchesQuerySmart(text, q);
 
-if(adv.priceMin != null && (priceNum == null || priceNum < adv.priceMin)) okAdv = false;
-if(adv.priceMax != null && (priceNum == null || priceNum > adv.priceMax)) okAdv = false;
+		// 2) filtros rápidos (chips)
+		const okFilters = [...activeFilters].every(fk => matchesQuickFilter(card, fk));
 
-if(adv.kmMax != null && (kmNum == null || kmNum > adv.kmMax)) okAdv = false;
+		// 3) filtros avançados (lendo do dataset do card)
+		let okAdv = true;
+		const infoBtn = card.querySelector(".carInfo");
 
-if(adv.gear && !gearTxt.includes(norm(adv.gear))) okAdv = false;
-if(adv.fuel && !fuelTxt.includes(norm(adv.fuel))) okAdv = false;
-if(adv.colorText && !colorTxt.includes(norm(adv.colorText))) okAdv = false;
+		// preço do dataset (ex: "R$ 59.900")
+		const priceNum = priceToNumber(infoBtn?.dataset.price || "");
 
-if(adv.type){
-  const t = norm(adv.type);
-  if(!subTxt.includes(t)) okAdv = false;
-}
+		// meta JSON do dataset
+		let metaObj = {};
+		try { metaObj = JSON.parse(infoBtn?.dataset.meta || "{}"); } catch {}
 
-if(adv.modelText){
-  const q = norm(adv.modelText);
-  if(!text.includes(q)) okAdv = false; // usa o index de texto completo
-}
-    index.forEach(({card, text}) => {
-	const ok = okText && okFilters && okAdv;
-    });
+		const kmNum = metaObj["KM"] ? Number(String(metaObj["KM"]).replace(/[^\d]/g,"")) : null;
+		const gearTxt = norm2(metaObj["Câmbio"] || "");
+		const fuelTxt = norm2(metaObj["Combustível"] || "");
+		const colorTxt = norm2(metaObj["Cor"] || "");
+		const subTxt = norm2(infoBtn?.dataset.sub || "");
 
-    if(resultsCount) resultsCount.textContent = `${visible} encontrados`;
-    if(emptyState) emptyState.style.display = (visible === 0) ? "block" : "none";
-  }
+		// aplica regras
+		if(adv.priceMin != null && (priceNum == null || priceNum < adv.priceMin)) okAdv = false;
+		if(adv.priceMax != null && (priceNum == null || priceNum > adv.priceMax)) okAdv = false;
+
+		if(adv.kmMax != null && (kmNum == null || kmNum > adv.kmMax)) okAdv = false;
+
+		if(adv.gear && !gearTxt.includes(norm2(adv.gear))) okAdv = false;
+		if(adv.fuel && !fuelTxt.includes(norm2(adv.fuel))) okAdv = false;
+		if(adv.colorText && !colorTxt.includes(norm2(adv.colorText))) okAdv = false;
+
+		// tipo (SUV/Sedan/Hatch) — usa o "sub" do card
+		if(adv.type){
+		  const t = norm2(adv.type);
+		  if(!subTxt.includes(t)) okAdv = false;
+		}
+
+		// modelo texto — usa o índice completo "text"
+		if(adv.modelText){
+		  const mq = norm2(adv.modelText);
+		  if(!text.includes(mq)) okAdv = false;
+		}
+
+		const ok = okText && okFilters && okAdv;
+
+		card.style.display = ok ? "" : "none";
+		if(ok) visible++;
+	  });
+
+	  if(resultsCount) resultsCount.textContent = `${visible} encontrados`;
+	  if(emptyState) emptyState.style.display = (visible === 0) ? "block" : "none";
+	}
 
   // init
   applyFilter();
@@ -2074,8 +2104,7 @@ if(adv.modelText){
       }
 
       applyFilter();
-	  // expõe para o filtro avançado chamar
-window.__APPLY_ALL_FILTERS__ = applyFilter;
+	window.__APPLY_ALL_FILTERS__ = applyFilter;
     });
   });
 }
