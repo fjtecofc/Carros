@@ -1518,14 +1518,24 @@ async function loadCarsFromJson() {
 			</div>
 
 			<div class="actions">
-			  <a class="btn small carInfo"
-				data-title="${car.title}"
-				data-sub="${car.sub}"
-				data-price="${car.price}"
-				data-img="${car.thumb}"
-				data-images='${imagesJson}'
-				data-desc="${car.desc}"
-				data-meta='${metaJson}'
+			<a class="btn small carInfo"
+			  data-title="${escapeAttr(car.title || "")}"
+			  data-sub="${escapeAttr(car.sub || "")}"
+			  data-price="${escapeAttr(car.price || "")}"
+			  data-pricevalue="${car.priceValue ?? ""}"
+			  data-img="${escapeAttr(car.thumb || "")}"
+			  data-images='${escapeAttr(imagesJson)}'
+			  data-desc="${escapeAttr(car.desc || "")}"
+			  data-meta='${escapeAttr(metaJson)}'
+			  data-brand="${escapeAttr(car.brand || "")}"
+			  data-model="${escapeAttr(car.model || "")}"
+			  data-type="${escapeAttr(car.type || "")}"
+			  data-year="${car.year ?? ""}"
+			  data-km="${car.km ?? ""}"
+			  data-gear="${escapeAttr(car.gear || "")}"
+			  data-fuel="${escapeAttr(car.fuel || "")}"
+			  data-color="${escapeAttr(car.color || "")}"
+			  data-doors="${car.doors ?? ""}"
 			  >Detalhes</a>
 			</div>
 		  </article>
@@ -2023,24 +2033,23 @@ function initSearchFilters() {
     let okAdv = true;
     const infoBtn = card.querySelector(".carInfo");
 
-    const priceNum = priceToNumber(infoBtn?.dataset.price || "");
-
-    let metaObj = {};
-    try { metaObj = JSON.parse(infoBtn?.dataset.meta || "{}"); } catch {}
-
-    const titleTxt = norm2(infoBtn?.dataset.title || "");
-    const subTxt   = norm2(infoBtn?.dataset.sub || "");
-
-    const kmNum    = metaObj["KM"] ? Number(String(metaObj["KM"]).replace(/[^\d]/g,"")) : null;
-    const gearTxt  = norm2(metaObj["Câmbio"] || "");
-    const fuelTxt  = norm2(metaObj["Combustível"] || "");
-    const colorTxt = norm2(metaObj["Cor"] || "");
-    const doorsNum = metaObj["Portas"] ? Number(String(metaObj["Portas"]).replace(/[^\d]/g,"")) : null;
-
-    const brandTxt = titleTxt.split(" ")[0] || "";
-
-    const yearMatch = subTxt.match(/\b(19|20)\d{2}\b/) || text.match(/\b(19|20)\d{2}\b/);
-    const yearNum = yearMatch ? Number(yearMatch[0]) : null;
+	const priceNum = Number(infoBtn?.dataset.pricevalue || 0) || null;
+	
+	let metaObj = {};
+	try { metaObj = JSON.parse(infoBtn?.dataset.meta || "{}"); } catch {}
+	
+	const titleTxt = norm2(infoBtn?.dataset.title || "");
+	const subTxt   = norm2(infoBtn?.dataset.sub || "");
+	
+	const brandTxt = norm2(infoBtn?.dataset.brand || "");
+	const modelTxt = norm2(infoBtn?.dataset.model || "");
+	const typeTxt  = norm2(infoBtn?.dataset.type || "");
+	const yearNum  = Number(infoBtn?.dataset.year || 0) || null;
+	const kmNum    = Number(infoBtn?.dataset.km || 0) || null;
+	const gearTxt  = norm2(infoBtn?.dataset.gear || "");
+	const fuelTxt  = norm2(infoBtn?.dataset.fuel || "");
+	const colorTxt = norm2(infoBtn?.dataset.color || "");
+	const doorsNum = Number(infoBtn?.dataset.doors || 0) || null;
 
     if(adv.priceMin != null && (priceNum == null || priceNum < adv.priceMin)) okAdv = false;
     if(adv.priceMax != null && (priceNum == null || priceNum > adv.priceMax)) okAdv = false;
@@ -2051,21 +2060,20 @@ function initSearchFilters() {
     if(adv.fuel && !fuelTxt.includes(norm2(adv.fuel))) okAdv = false;
     if(adv.colorText && !colorTxt.includes(norm2(adv.colorText))) okAdv = false;
 
-    if(adv.type){
-      const t = norm2(adv.type);
-      if(!subTxt.includes(t)) okAdv = false;
-    }
+	if(adv.type){
+	  const t = norm2(adv.type);
+	  if(typeTxt !== t) okAdv = false;
+	}
 
-    if(adv.modelText){
-      const mq = norm2(adv.modelText);
-      if(!(titleTxt.includes(mq) || subTxt.includes(mq) || text.includes(mq))) okAdv = false;
-    }
+	if(adv.modelText){
+	  const mq = norm2(adv.modelText);
+	  if(!(modelTxt.includes(mq) || titleTxt.includes(mq) || subTxt.includes(mq) || text.includes(mq))) okAdv = false;
+	}
 
-    if(adv.brand){
-      const bq = norm2(adv.brand);
-      if(!brandTxt.includes(bq) && !titleTxt.includes(bq)) okAdv = false;
-    }
-
+	if(adv.brand){
+	  const bq = norm2(adv.brand);
+	  if(brandTxt !== bq) okAdv = false;
+	}
     if(adv.yearMin != null && (yearNum == null || yearNum < adv.yearMin)) okAdv = false;
     if(adv.yearMax != null && (yearNum == null || yearNum > adv.yearMax)) okAdv = false;
 
@@ -2345,5 +2353,6 @@ clearBtn?.addEventListener("click", () => {
 </body>
 
 </html>
+
 
 
