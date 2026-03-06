@@ -2333,6 +2333,9 @@ function initAdvancedFilters(carsRaw = []) {
 
 applyBtn?.addEventListener("click", () => {
   window.__ADV_FILTERS__ = readFilters();  // salva filtros avançados
+	  // limpa filtros rápidos
+  document.querySelectorAll("[data-filter]").forEach(b => b.classList.remove("on"));
+	
   hide();
   // reaplica o filtro principal (chips + busca) levando em conta o avançado
   if (window.__APPLY_ALL_FILTERS__) window.__APPLY_ALL_FILTERS__();
@@ -2354,6 +2357,7 @@ clearBtn?.addEventListener("click", () => {
 </body>
 
 </html>
+
 
 
 
