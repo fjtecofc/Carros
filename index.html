@@ -2019,44 +2019,57 @@ function initSearchFilters() {
 		// 2) filtros rápidos (chips)
 		const okFilters = [...activeFilters].every(fk => matchesQuickFilter(card, fk));
 
-		// 3) filtros avançados (lendo do dataset do card)
-		let okAdv = true;
-		const infoBtn = card.querySelector(".carInfo");
+    // 3) filtros avançados (lendo do dataset do card)
+    let okAdv = true;
+    const infoBtn = card.querySelector(".carInfo");
 
-		// preço do dataset (ex: "R$ 59.900")
-		const priceNum = priceToNumber(infoBtn?.dataset.price || "");
+    const priceNum = priceToNumber(infoBtn?.dataset.price || "");
 
-		// meta JSON do dataset
-		let metaObj = {};
-		try { metaObj = JSON.parse(infoBtn?.dataset.meta || "{}"); } catch {}
+    let metaObj = {};
+    try { metaObj = JSON.parse(infoBtn?.dataset.meta || "{}"); } catch {}
 
-		const kmNum = metaObj["KM"] ? Number(String(metaObj["KM"]).replace(/[^\d]/g,"")) : null;
-		const gearTxt = norm2(metaObj["Câmbio"] || "");
-		const fuelTxt = norm2(metaObj["Combustível"] || "");
-		const colorTxt = norm2(metaObj["Cor"] || "");
-		const subTxt = norm2(infoBtn?.dataset.sub || "");
+    const titleTxt = norm2(infoBtn?.dataset.title || "");
+    const subTxt   = norm2(infoBtn?.dataset.sub || "");
 
-		// aplica regras
-		if(adv.priceMin != null && (priceNum == null || priceNum < adv.priceMin)) okAdv = false;
-		if(adv.priceMax != null && (priceNum == null || priceNum > adv.priceMax)) okAdv = false;
+    const kmNum    = metaObj["KM"] ? Number(String(metaObj["KM"]).replace(/[^\d]/g,"")) : null;
+    const gearTxt  = norm2(metaObj["Câmbio"] || "");
+    const fuelTxt  = norm2(metaObj["Combustível"] || "");
+    const colorTxt = norm2(metaObj["Cor"] || "");
+    const doorsNum = metaObj["Portas"] ? Number(String(metaObj["Portas"]).replace(/[^\d]/g,"")) : null;
 
-		if(adv.kmMax != null && (kmNum == null || kmNum > adv.kmMax)) okAdv = false;
+    const brandTxt = titleTxt.split(" ")[0] || "";
 
-		if(adv.gear && !gearTxt.includes(norm2(adv.gear))) okAdv = false;
-		if(adv.fuel && !fuelTxt.includes(norm2(adv.fuel))) okAdv = false;
-		if(adv.colorText && !colorTxt.includes(norm2(adv.colorText))) okAdv = false;
+    const yearMatch = subTxt.match(/\b(19|20)\d{2}\b/) || text.match(/\b(19|20)\d{2}\b/);
+    const yearNum = yearMatch ? Number(yearMatch[0]) : null;
 
-		// tipo (SUV/Sedan/Hatch) — usa o "sub" do card
-		if(adv.type){
-		  const t = norm2(adv.type);
-		  if(!subTxt.includes(t)) okAdv = false;
-		}
+    if(adv.priceMin != null && (priceNum == null || priceNum < adv.priceMin)) okAdv = false;
+    if(adv.priceMax != null && (priceNum == null || priceNum > adv.priceMax)) okAdv = false;
 
-		// modelo texto — usa o índice completo "text"
-		if(adv.modelText){
-		  const mq = norm2(adv.modelText);
-		  if(!text.includes(mq)) okAdv = false;
-		}
+    if(adv.kmMax != null && (kmNum == null || kmNum > adv.kmMax)) okAdv = false;
+
+    if(adv.gear && !gearTxt.includes(norm2(adv.gear))) okAdv = false;
+    if(adv.fuel && !fuelTxt.includes(norm2(adv.fuel))) okAdv = false;
+    if(adv.colorText && !colorTxt.includes(norm2(adv.colorText))) okAdv = false;
+
+    if(adv.type){
+      const t = norm2(adv.type);
+      if(!subTxt.includes(t)) okAdv = false;
+    }
+
+    if(adv.modelText){
+      const mq = norm2(adv.modelText);
+      if(!(titleTxt.includes(mq) || subTxt.includes(mq) || text.includes(mq))) okAdv = false;
+    }
+
+    if(adv.brand){
+      const bq = norm2(adv.brand);
+      if(!brandTxt.includes(bq) && !titleTxt.includes(bq)) okAdv = false;
+    }
+
+    if(adv.yearMin != null && (yearNum == null || yearNum < adv.yearMin)) okAdv = false;
+    if(adv.yearMax != null && (yearNum == null || yearNum > adv.yearMax)) okAdv = false;
+
+    if(adv.doors != null && (doorsNum == null || doorsNum !== adv.doors)) okAdv = false;
 
 		const ok = okText && okFilters && okAdv;
 
@@ -2077,13 +2090,16 @@ window.__APPLY_ALL_FILTERS__ = applyFilter;
 
   if(clearSearch){
     clearSearch.addEventListener("click", () => {
-      if(searchInput) searchInput.value = "";
-      activeFilters.clear();
-      filterBtns.forEach(b => b.classList.remove("on"));
-      applyFilter();
-      searchInput?.focus();
-    });
-  }
+	if(clearSearch){
+	  clearSearch.addEventListener("click", () => {
+	    if(searchInput) searchInput.value = "";
+	    activeFilters.clear();
+	    filterBtns.forEach(b => b.classList.remove("on"));
+	    window.__ADV_FILTERS__ = {};
+	    applyFilter();
+	    searchInput?.focus();
+	  });
+	}
 
   filterBtns.forEach(btn => {
     btn.addEventListener("click", () => {
@@ -2331,3 +2347,4 @@ clearBtn?.addEventListener("click", () => {
 </body>
 
 </html>
+
