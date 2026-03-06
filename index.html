@@ -1953,6 +1953,11 @@ function initSearchFilters() {
   const filterBtns = [...document.querySelectorAll("[data-filter]")];
   const activeFilters = new Set();
 
+	window.__RESET_QUICK_FILTERS__ = () => {
+  activeFilters.clear();
+  document.querySelectorAll("[data-filter]").forEach(b => b.classList.remove("on"));
+};
+
   function normalize(s){
     return (s || "")
       .toString()
@@ -2330,15 +2335,17 @@ function initAdvancedFilters(carsRaw = []) {
   closeBtn?.addEventListener("click", hide);
   advModal?.addEventListener("click", (e) => { if(e.target === advModal) hide(); });
 
-applyBtn?.addEventListener("click", () => {
-  window.__ADV_FILTERS__ = readFilters();  // salva filtros avançados
-	  // limpa filtros rápidos
-  document.querySelectorAll("[data-filter]").forEach(b => b.classList.remove("on"));
+	applyBtn?.addEventListener("click", () => {
+	  window.__ADV_FILTERS__ = readFilters();
 	
-  hide();
-  // reaplica o filtro principal (chips + busca) levando em conta o avançado
-  if (window.__APPLY_ALL_FILTERS__) window.__APPLY_ALL_FILTERS__();
-});
+	  // limpa filtros rápidos
+	  if (window.__RESET_QUICK_FILTERS__) window.__RESET_QUICK_FILTERS__();
+	
+	  hide();
+	
+	  // reaplica filtros
+	  if (window.__APPLY_ALL_FILTERS__) window.__APPLY_ALL_FILTERS__();
+	});
 
 clearBtn?.addEventListener("click", () => {
   clearUI();
@@ -2356,6 +2363,7 @@ clearBtn?.addEventListener("click", () => {
 </body>
 
 </html>
+
 
 
 
