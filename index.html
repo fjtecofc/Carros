@@ -2172,10 +2172,11 @@ function initAdvancedFilters(carsRaw = []) {
     return (s || "").toString().normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
   }
 
-  function num(v){
-    const n = Number(v);
-    return Number.isFinite(n) ? n : null;
-  }
+	function num(v){
+	  if(v === "" || v == null) return null;
+	  const n = Number(v);
+	  return Number.isFinite(n) ? n : null;
+	}
 
   // Preenche marcas (se tiver brand)
   if(fBrand){
@@ -2353,6 +2354,7 @@ clearBtn?.addEventListener("click", () => {
 </body>
 
 </html>
+
 
 
 
