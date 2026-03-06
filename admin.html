@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Painel do Estoque</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#121a31;
+      --card2:#18213d;
+      --line:rgba(255,255,255,.12);
+      --text:#eef3ff;
+      --muted:#b9c5ee;
+      --ok:#00d084;
+      --pri:#5aa9ff;
+      --warn:#ffb020;
+      --danger:#ff5d73;
+      --radius:18px;
+      --shadow:0 20px 50px rgba(0,0,0,.35);
+      --max:1200px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:linear-gradient(180deg,#0a0f1e,#111935);
+      color:var(--text);
+    }
+
+    .wrap{
+      width:min(var(--max), calc(100% - 28px));
+      margin:24px auto 60px;
+    }
+
+    .hero{
+      text-align:center;
+      margin-bottom:20px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(26px,4vw,40px);
+    }
+
+    .sub{
+      color:var(--muted);
+      margin:10px auto 0;
+      line-height:1.6;
+      font-size:14px;
+      max-width:800px;
+    }
+
+    .toolbar{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:center;
+      margin:18px 0 22px;
+    }
+
+    .btn{
+      border:none;
+      cursor:pointer;
+      border-radius:14px;
+      padding:12px 16px;
+      font-weight:800;
+      color:#07111f;
+      background:#fff;
+      transition:.18s ease;
+    }
+
+    .btn:hover{ transform:translateY(-1px); }
+    .btn.secondary{
+      color:var(--text);
+      background:rgba(255,255,255,.08);
+      border:1px solid var(--line);
+    }
+    .btn.primary{ background:var(--pri); }
+    .btn.ok{ background:var(--ok); }
+    .btn.warn{ background:var(--warn); }
+    .btn.danger{ background:var(--danger); color:#fff; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .cardHead{
+      padding:16px 18px;
+      border-bottom:1px solid var(--line);
+      font-weight:900;
+      font-size:16px;
+    }
+
+    .cardBody{
+      padding:16px 18px 18px;
+    }
+
+    .steps{
+      display:grid;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .step{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      border-radius:14px;
+      padding:12px;
+      color:var(--muted);
+      line-height:1.5;
+      font-size:14px;
+    }
+
+    .step b{
+      color:var(--text);
+    }
+
+    .carsList{
+      display:grid;
+      gap:12px;
+      max-height:72vh;
+      overflow:auto;
+    }
+
+    .carItem{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:rgba(255,255,255,.04);
+      display:grid;
+      grid-template-columns: 92px 1fr auto;
+      gap:12px;
+      align-items:center;
+    }
+
+    .carThumb{
+      width:92px;
+      height:68px;
+      object-fit:cover;
+      border-radius:10px;
+      background:#0d1428;
+      border:1px solid var(--line);
+    }
+
+    .carTitle{
+      font-weight:900;
+      margin:0 0 6px;
+      font-size:15px;
+    }
+
+    .carMeta{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+
+    .itemActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .mini{
+      padding:9px 11px;
+      border-radius:10px;
+      border:none;
+      cursor:pointer;
+      font-weight:800;
+    }
+
+    .mini.edit{ background:var(--pri); color:#06111e; }
+    .mini.copy{ background:var(--warn); color:#06111e; }
+    .mini.remove{ background:var(--danger); color:#fff; }
+
+    .formGrid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+
+    .full{ grid-column:1 / -1; }
+
+    .field label{
+      display:block;
+      margin-bottom:6px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:800;
+    }
+
+    .input, .textarea, .select{
+      width:100%;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border-radius:12px;
+      padding:11px 12px;
+      outline:none;
+      font:inherit;
+    }
+    .select{
+    background:
+        linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.04)),
+        rgba(255,255,255,.06);
+    color:#ECF2FF;
+    }
+
+    .select option{
+    background:#0e1530;
+    color:#ECF2FF;
+    }
+    .textarea{
+      min-height:100px;
+      resize:vertical;
+    }
+
+    .input:focus, .textarea:focus, .select:focus{
+      border-color:rgba(90,169,255,.75);
+      box-shadow:0 0 0 3px rgba(90,169,255,.15);
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+      margin-top:5px;
+    }
+
+    .actionsBottom{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:16px;
+      justify-content:center;
+    }
+
+    .status{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+    }
+
+    .empty{
+      color:var(--muted);
+      text-align:center;
+      padding:10px 0;
+    }
+
+    @media (max-width: 980px){
+      .grid{ grid-template-columns:1fr; }
+      .carsList{ max-height:none; }
+    }
+
+    @media (max-width: 640px){
+      .formGrid{ grid-template-columns:1fr; }
+      .carItem{ grid-template-columns:1fr; }
+      .carThumb{ width:100%; height:180px; }
+      .itemActions{ justify-content:flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginScreen" style="
+position:fixed;
+inset:0;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(180deg,#0a0f1e,#111935);
+z-index:9999;
+font-family:system-ui;
+">
+    <div style="
+width:min(420px,90%);
+background:#121a31;
+border-radius:18px;
+padding:28px;
+border:1px solid rgba(255,255,255,.1);
+box-shadow:0 20px 60px rgba(0,0,0,.4);
+text-align:center;
+">
+      <h2 style="margin-top:0;color:#ECF2FF;">Painel do Estoque</h2>
+
+      <p style="color:#B9C5EE;font-size:14px;margin-bottom:20px;">
+        Digite a senha para acessar o painel
+      </p>
+
+      <input id="adminPassword"
+      type="password"
+      placeholder="Senha"
+      style="
+width:100%;
+padding:12px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,.2);
+background:#0b1020;
+color:#ECF2FF;
+outline:none;
+margin-bottom:14px;
+font-size:14px;
+"/>
+
+      <button id="loginBtn"
+      style="
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#5aa9ff;
+color:#06111e;
+font-weight:800;
+cursor:pointer;
+">
+        Entrar
+      </button>
+
+      <p id="loginError" style="
+color:#ff5d73;
+font-size:13px;
+margin-top:10px;
+display:none;
+">
+        Senha incorreta
+      </p>
+    </div>
+  </div>
+
+  <div id="adminApp" style="display:none;">
+  <div class="wrap">
+    <div class="hero">
+      <h1>Painel do Estoque</h1>
+      <div class="sub">
+        Aqui você pode editar os carros do site com facilidade. <br>
+        Quando terminar, clique em <b>Baixar arquivo</b> e me envie o arquivo atualizado.
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <button class="btn primary" id="btnNew">+ Novo carro</button>
+      <button class="btn secondary" id="btnClearAll">Limpar tudo</button>
+      <button class="btn ok" id="btnDownload">Baixar arquivo</button>
+    </div>
+
+    <div class="grid">
+      <section class="card">
+        <div class="cardHead">Como editar</div>
+        <div class="cardBody">
+          <div class="steps">
+            <div class="step"><b>1.</b> Escolha um carro na lista e clique em <b>Editar</b>, ou clique em <b>Novo carro</b>.</div>
+            <div class="step"><b>2.</b> Altere as informações do veículo no formulário.</div>
+            <div class="step"><b>3.</b> Clique em <b>Salvar carro</b> para guardar a alteração na lista.</div>
+            <div class="step"><b>4.</b> Quando terminar tudo, clique em <b>Baixar arquivo</b>.</div>
+            <div class="step"><b>5.</b> Me envie esse arquivo para eu publicar no site.</div>
+          </div>
+
+          <div class="card" style="background:rgba(255,255,255,.03); box-shadow:none;">
+            <div class="cardHead">Carros cadastrados</div>
+            <div class="cardBody">
+              <div id="carsList" class="carsList"></div>
+              <div id="emptyList" class="empty">Carregando carros...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="cardHead">Editar informações do carro</div>
+        <div class="cardBody">
+          <form id="carForm">
+            <div class="formGrid">
+              <div class="field">
+                <label for="brand">Marca</label>
+                <input id="brand" class="input" placeholder="Ex: Chevrolet">
+              </div>
+
+              <div class="field">
+                <label for="model">Modelo</label>
+                <input id="model" class="input" placeholder="Ex: Onix">
+              </div>
+
+              <div class="field">
+                <label for="type">Tipo</label>
+                <select id="type" class="select">
+                  <option value="">Selecione</option>
+                  <option value="Hatch">Hatch</option>
+                  <option value="Sedan">Sedan</option>
+                  <option value="SUV">SUV</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="highlight">Destaque do carro</label>
+                <input id="highlight" class="input" placeholder="Ex: Alta procura">
+              </div>
+
+              <div class="field">
+                <label for="year">Ano</label>
+                <input id="year" class="input" type="number" placeholder="Ex: 2019">
+              </div>
+
+              <div class="field">
+                <label for="km">KM</label>
+                <input id="km" class="input" type="number" placeholder="Ex: 58000">
+              </div>
+
+              <div class="field">
+                <label for="priceValue">Preço</label>
+                <input id="priceValue" class="input" type="number" placeholder="Ex: 59900">
+                <div class="hint">Digite só números, sem ponto e sem vírgula.</div>
+              </div>
+
+              <div class="field">
+                <label for="gear">Câmbio</label>
+                <select id="gear" class="select">
+                  <option value="">Selecione</option>
+                  <option value="Manual">Manual</option>
+                  <option value="Automático">Automático</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="fuel">Combustível</label>
+                <select id="fuel" class="select">
+                  <option value="">Selecione</option>
+                  <option value="Flex">Flex</option>
+                  <option value="Gasolina">Gasolina</option>
+                  <option value="Diesel">Diesel</option>
+                  <option value="Elétrico">Elétrico</option>
+                  <option value="Híbrido">Híbrido</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label for="color">Cor</label>
+                <input id="color" class="input" placeholder="Ex: Prata">
+              </div>
+
+              <div class="field">
+                <label for="doors">Portas</label>
+                <select id="doors" class="select">
+                  <option value="">Selecione</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label for="title">Título do carro</label>
+                <input id="title" class="input" placeholder="Ex: Onix LT 1.0">
+              </div>
+
+              <div class="field full">
+                <label for="sub">Resumo do carro</label>
+                <input id="sub" class="input" placeholder="Ex: 2019 • Completo • Flex">
+              </div>
+
+              <div class="field full">
+                <label for="desc">Descrição</label>
+                <textarea id="desc" class="textarea" placeholder="Descreva os principais pontos do carro"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="placa">Final da placa</label>
+                <input id="placa" class="input" placeholder="Ex: Final 4">
+              </div>
+
+              <div class="field">
+                <label for="chaveReserva">Chave reserva</label>
+                <input id="chaveReserva" class="input" placeholder="Ex: Sim">
+              </div>
+
+              <div class="field">
+                <label for="ipva">IPVA</label>
+                <input id="ipva" class="input" placeholder="Ex: Ok">
+              </div>
+
+              <div class="field">
+                <label for="laudo">Laudo</label>
+                <input id="laudo" class="input" placeholder="Ex: Consulte">
+              </div>
+
+              <div class="field">
+                <label for="revisao">Revisão</label>
+                <input id="revisao" class="input" placeholder="Ex: Em dia">
+              </div>
+
+              <div class="field">
+                <label for="garantia">Garantia</label>
+                <input id="garantia" class="input" placeholder="Ex: Consulte">
+              </div>
+            </div>
+
+            <div class="actionsBottom">
+              <button type="submit" class="btn primary">Salvar carro</button>
+              <button type="button" class="btn secondary" id="btnResetForm">Limpar formulário</button>
+            </div>
+
+            <div id="formStatus" class="status">Edite um carro da lista ou clique em “Novo carro”.</div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
+  </div>
+
+
+  <script>
+    let cars = [];
+    let editingIndex = null;
+
+    const els = {
+      btnDownload: document.getElementById("btnDownload"),
+      btnNew: document.getElementById("btnNew"),
+      btnClearAll: document.getElementById("btnClearAll"),
+      btnResetForm: document.getElementById("btnResetForm"),
+      carsList: document.getElementById("carsList"),
+      emptyList: document.getElementById("emptyList"),
+      carForm: document.getElementById("carForm"),
+      formStatus: document.getElementById("formStatus"),
+    };
+
+    function $(id){
+      return document.getElementById(id);
+    }
+
+    function safe(v){
+      return String(v ?? "");
+    }
+
+    function slugify(text){
+      return safe(text)
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+    }
+
+    function formatPriceText(priceValue){
+      const n = Number(priceValue || 0);
+      if (!n) return "";
+      return "R$ " + n.toLocaleString("pt-BR");
+    }
+
+    function resetForm(){
+      [
+        "brand","model","type","highlight","year","km","priceValue",
+        "gear","fuel","color","doors","title","sub","desc",
+        "placa","chaveReserva","ipva","laudo","revisao","garantia"
+      ].forEach(id => $(id).value = "");
+
+      editingIndex = null;
+      els.formStatus.textContent = "Edite um carro da lista ou clique em “Novo carro”.";
+    }
+
+    function buildCarFromForm(oldCar = {}) {
+      const brand = $("brand").value.trim();
+      const model = $("model").value.trim();
+      const year = Number($("year").value || 0) || null;
+      const priceValue = Number($("priceValue").value || 0) || null;
+
+      const fallbackId = oldCar.id || slugify([brand, model, year].filter(Boolean).join("-"));
+
+      const thumb = oldCar.thumb || "";
+      const images = Array.isArray(oldCar.images) ? oldCar.images : [];
+
+      const meta = {
+        "KM": $("km").value ? Number($("km").value).toLocaleString("pt-BR") : "",
+        "Câmbio": $("gear").value.trim(),
+        "Combustível": $("fuel").value.trim(),
+        "Cor": $("color").value.trim(),
+        "Portas": $("doors").value.trim(),
+        "Placa": $("placa").value.trim(),
+        "Chave reserva": $("chaveReserva").value.trim(),
+        "IPVA": $("ipva").value.trim(),
+        "Laudo": $("laudo").value.trim(),
+        "Revisão": $("revisao").value.trim(),
+        "Garantia": $("garantia").value.trim()
+      };
+
+      Object.keys(meta).forEach(key => {
+        if (!safe(meta[key]).trim()) delete meta[key];
+      });
+
+      const car = {
+        id: fallbackId,
+        brand,
+        model,
+        type: $("type").value.trim(),
+        year,
+        km: Number($("km").value || 0) || null,
+        priceValue,
+        gear: $("gear").value.trim(),
+        fuel: $("fuel").value.trim(),
+        color: $("color").value.trim(),
+        doors: Number($("doors").value || 0) || null,
+        badge: $("highlight").value.trim(),
+        badgeDot: true,
+        thumb,
+        titleCard: oldCar.titleCard || undefined,
+        title: $("title").value.trim(),
+        sub: $("sub").value.trim(),
+        price: formatPriceText(priceValue),
+        images,
+        desc: $("desc").value.trim(),
+        meta
+      };
+
+      Object.keys(car).forEach(key => {
+        if (car[key] === undefined || car[key] === null || car[key] === "") {
+          if (!["year","km","priceValue","doors"].includes(key)) delete car[key];
+        }
+      });
+
+      return car;
+    }
+
+    function fillForm(car){
+      $("brand").value = safe(car.brand);
+      $("model").value = safe(car.model);
+      $("type").value = safe(car.type);
+      $("highlight").value = safe(car.badge);
+      $("year").value = safe(car.year);
+      $("km").value = safe(car.km);
+      $("priceValue").value = safe(car.priceValue);
+      $("gear").value = safe(car.gear);
+      $("fuel").value = safe(car.fuel);
+      $("color").value = safe(car.color);
+      $("doors").value = safe(car.doors);
+      $("title").value = safe(car.title);
+      $("sub").value = safe(car.sub);
+      $("desc").value = safe(car.desc);
+
+      $("placa").value = safe(car.meta?.["Placa"]);
+      $("chaveReserva").value = safe(car.meta?.["Chave reserva"]);
+      $("ipva").value = safe(car.meta?.["IPVA"]);
+      $("laudo").value = safe(car.meta?.["Laudo"]);
+      $("revisao").value = safe(car.meta?.["Revisão"]);
+      $("garantia").value = safe(car.meta?.["Garantia"]);
+    }
+
+    function renderCars(){
+      els.carsList.innerHTML = "";
+
+      if (!cars.length) {
+        els.emptyList.style.display = "block";
+        els.emptyList.textContent = "Nenhum carro cadastrado.";
+        return;
+      }
+
+      els.emptyList.style.display = "none";
+
+      cars.forEach((car, index) => {
+        const item = document.createElement("div");
+        item.className = "carItem";
+
+        item.innerHTML = `
+          <img class="carThumb" src="${safe(car.thumb)}" alt="${safe(car.title)}" onerror="this.style.opacity='.2'">
+          <div>
+            <div class="carTitle">${safe(car.title || car.model || "Sem título")}</div>
+            <div class="carMeta">
+              ${safe(car.brand)} • ${safe(car.model)} • ${safe(car.year)}<br>
+              ${safe(car.price)} • ${safe(car.gear)} • ${safe(car.fuel)}
+            </div>
+          </div>
+          <div class="itemActions">
+            <button class="mini edit" data-action="edit">Editar</button>
+            <button class="mini copy" data-action="copy">Duplicar</button>
+            <button class="mini remove" data-action="remove">Excluir</button>
+          </div>
+        `;
+
+        item.querySelector('[data-action="edit"]').addEventListener("click", () => {
+          editingIndex = index;
+          fillForm(car);
+          els.formStatus.textContent = `Editando: ${safe(car.title || car.id)}`;
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+
+        item.querySelector('[data-action="copy"]').addEventListener("click", () => {
+          const clone = JSON.parse(JSON.stringify(car));
+          clone.id = safe(clone.id) + "-copia";
+          cars.push(clone);
+          renderCars();
+        });
+
+        item.querySelector('[data-action="remove"]').addEventListener("click", () => {
+          const ok = confirm(`Excluir "${safe(car.title || car.id)}"?`);
+          if (!ok) return;
+          cars.splice(index, 1);
+          if (editingIndex === index) resetForm();
+          renderCars();
+        });
+
+        els.carsList.appendChild(item);
+      });
+    }
+
+    function downloadJson(){
+      const content = JSON.stringify(cars, null, 2);
+      const blob = new Blob([content], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "cars.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function loadCarsAutomatically(){
+      try {
+        const r = await fetch("./data/cars.json");
+        const data = await r.json();
+
+        if (!Array.isArray(data)) throw new Error("Formato inválido");
+
+        cars = data;
+        renderCars();
+        resetForm();
+        els.formStatus.textContent = "Estoque carregado com sucesso.";
+      } catch (err) {
+        console.error(err);
+        els.emptyList.style.display = "block";
+        els.emptyList.textContent = "Não consegui carregar os carros automaticamente.";
+        els.formStatus.textContent = "Erro ao carregar o arquivo do estoque.";
+      }
+    }
+
+    els.btnDownload.addEventListener("click", () => {
+      if (!cars.length) {
+        alert("Não há carros para baixar.");
+        return;
+      }
+      downloadJson();
+    });
+
+    els.btnNew.addEventListener("click", () => {
+      resetForm();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    els.btnClearAll.addEventListener("click", () => {
+      const ok = confirm("Tem certeza que quer apagar todos os carros da lista?");
+      if (!ok) return;
+      cars = [];
+      resetForm();
+      renderCars();
+    });
+
+    els.btnResetForm.addEventListener("click", resetForm);
+
+    els.carForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const oldCar = editingIndex !== null ? cars[editingIndex] : {};
+      const car = buildCarFromForm(oldCar);
+
+      if (!car.brand || !car.model || !car.title) {
+        alert("Preencha pelo menos marca, modelo e título do carro.");
+        return;
+      }
+
+      if (editingIndex === null) {
+        const exists = cars.some(c => c.id === car.id);
+        if (exists) {
+          alert("Já existe um carro parecido. Edite o existente ou altere os dados.");
+          return;
+        }
+        cars.push(car);
+        els.formStatus.textContent = `Carro "${car.title}" adicionado.`;
+      } else {
+        const duplicated = cars.some((c, i) => c.id === car.id && i !== editingIndex);
+        if (duplicated) {
+          alert("Já existe outro carro com esse identificador.");
+          return;
+        }
+        cars[editingIndex] = car;
+        els.formStatus.textContent = `Carro "${car.title}" atualizado.`;
+      }
+
+      renderCars();
+      resetForm();
+    });
+
+    loadCarsAutomatically();
+
+const ADMIN_PASSWORD = "123456"; // TROQUE PELA SENHA QUE QUISER
+
+function unlockAdmin(){
+
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("adminApp").style.display="block";
+
+localStorage.setItem("admin_access", Date.now())
+
+}
+
+function checkLogin(){
+
+const saved = localStorage.getItem("admin_access")
+
+if(!saved) return
+
+const hours = (Date.now() - saved) / 1000 / 60 / 60
+
+if(hours < 24){
+unlockAdmin()
+}
+
+}
+
+document.getElementById("loginBtn").addEventListener("click", ()=>{
+
+const pass = document.getElementById("adminPassword").value
+
+if(pass === ADMIN_PASSWORD){
+
+unlockAdmin()
+
+}else{
+
+document.getElementById("loginError").style.display="block"
+
+}
+
+})
+
+document.getElementById("adminPassword").addEventListener("keypress",(e)=>{
+if(e.key==="Enter"){
+document.getElementById("loginBtn").click()
+}
+})
+
+checkLogin()
+
+  </script>
+  </div>
+</body>
+</html>
