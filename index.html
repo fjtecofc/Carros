@@ -2067,7 +2067,9 @@ function initSearchFilters() {
 	  if(resultsCount) resultsCount.textContent = `${visible} encontrados`;
 	  if(emptyState) emptyState.style.display = (visible === 0) ? "block" : "none";
 	}
-
+	
+window.__APPLY_ALL_FILTERS__ = applyFilter;
+	
   // init
   applyFilter();
 
@@ -2104,7 +2106,6 @@ function initSearchFilters() {
       }
 
       applyFilter();
-	window.__APPLY_ALL_FILTERS__ = applyFilter;
     });
   });
 }
@@ -2328,4 +2329,5 @@ clearBtn?.addEventListener("click", () => {
 }
   </script>
 </body>
+
 </html>
